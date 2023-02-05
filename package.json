@@ -26,7 +26,14 @@
       "explorer/context": [
         {
           "command": "adrutilities.create.adr",
-          "group": "add"
+          "group": "2_workspace",
+          "when": "sideBarFocus && activeViewlet == 'workbench.view.explorer'"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "adrutilities.create.adr",
+          "when": "sideBarFocus && activeViewlet == 'workbench.view.explorer'"
         }
       ]
     }
