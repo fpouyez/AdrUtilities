@@ -1,4 +1,3 @@
-export const adrDirectoryName = 'ADR';
 export const adrChooseDirectoryBoxTitle = 'Dossier parent';
 export const adrNameInputBoxTitle = 'Titre court de l\'ADR';
 export const adrNameInputBoxPlaceHolder = 'MonSuperADR';

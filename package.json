@@ -16,26 +16,42 @@
   "contributes": {
     "commands": [
       {
-        "command": "adrutilities.create.adr",
+        "command": "adrutilities.create",
         "title": "Create an ADR",
         "shortTitle": "ADR Create",
+        "category": "ADR"
+      },
+      {
+        "command": "adrutilities.list",
+        "title": "List all ADRs",
+        "shortTitle": "ADR List",
         "category": "ADR"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "adrutilities.create.adr",
+          "command": "adrutilities.create",
           "group": "2_workspace",
           "when": "sideBarFocus && activeViewlet == 'workbench.view.explorer'"
         }
       ],
       "commandPalette": [
         {
-          "command": "adrutilities.create.adr",
+          "command": "adrutilities.create",
           "when": "sideBarFocus && activeViewlet == 'workbench.view.explorer'"
         }
       ]
+    },
+    "configuration": {
+      "title": "ADR Utilities",
+      "properties": {
+        "adrutilities.adrDirectoryName": {
+          "type": "string",
+          "default": "ADR",
+          "description": "Name of ADR folders used by this extension."
+        }
+      }
     }
   },
   "scripts": {
