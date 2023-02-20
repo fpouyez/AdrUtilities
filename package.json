@@ -10,8 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:adrutilities.adr"
-  ],
+		"*"
+	],
   "main": "./dist/main.js",
   "contributes": {
     "commands": [
@@ -25,6 +25,18 @@
         "command": "adrutilities.list",
         "title": "List all ADRs",
         "shortTitle": "ADR List",
+        "category": "ADR"
+      },
+      {
+        "command": "adrutilities.enableCodeLensNavigation",
+        "title": "Enable CodeLens ADR navigation.",
+        "shortTitle": "ADR Navigation Enable",
+        "category": "ADR"
+      },
+      {
+        "command": "adrutilities.disableCodeLensNavigation",
+        "title": "Disable CodeLens ADR navigation.",
+        "shortTitle": "ADR Navigation Disable",
         "category": "ADR"
       }
     ],
@@ -50,9 +62,25 @@
           "type": "string",
           "default": "ADR",
           "description": "Name of ADR folders used by this extension."
+        },
+        "adrutilities.enableCodeLensNavigation": {
+          "type": "boolean",
+          "default": "ADR",
+          "description": "Enable CodeLens navigation to ADRs."
         }
       }
-    }
+    },
+    "colors": [
+			{
+				"id": "adrutilities.adrHighlight",
+				"description": "Background decoration color for ADR references",
+				"defaults": {
+					"dark": "#FF000055",
+					"light": "#FF000055",
+					"highContrast": "#FF000055"
+				}
+			}
+		]
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",

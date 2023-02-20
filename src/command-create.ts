@@ -15,12 +15,10 @@ const concatDate = () => {
 const createAdrFullPath = (
   directory: vscode.Uri,
   adrTitle: string,
-  todayDate: string
-) =>
+  todayDate: string) => 
   vscode.Uri.joinPath(directory, "ADR_" + adrTitle + "_" + todayDate + ".md");
 
 const createAdrFile = (adrFullPath: vscode.Uri) =>
-  //vscode.workspace.fs.writeFile(adrFullPath, Buffer.from(adrStrings.template));
   vscode.workspace.fs.writeFile(adrFullPath, Buffer.from(adrStrings.template));
 
 const askForTitle = () =>
