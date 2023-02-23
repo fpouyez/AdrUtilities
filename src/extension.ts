@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { createAdr } from "./command-create";
 import { list } from "./command-list";
-import { AdrCodelensNavigationProvider } from "./codelens-provider";
+import { AdrCodelensNavigationProvider } from "./adr-codelens-navigation-provider";
 
 export function activate(context: vscode.ExtensionContext) {
   // console.log('Congratulations, your extension "adrutilities" is now active!');

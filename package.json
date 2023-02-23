@@ -63,24 +63,18 @@
           "default": "ADR",
           "description": "Name of ADR folders used by this extension."
         },
+        "adrutilities.adrFilePrefix": {
+          "type": "string",
+          "default": "ADR_",
+          "description": "Prefix use in ADR filename, to differenciate ADR files from other MD files."
+        },
         "adrutilities.enableCodeLensNavigation": {
           "type": "boolean",
           "default": "ADR",
           "description": "Enable CodeLens navigation to ADRs."
         }
       }
-    },
-    "colors": [
-			{
-				"id": "adrutilities.adrHighlight",
-				"description": "Background decoration color for ADR references",
-				"defaults": {
-					"dark": "#FF000055",
-					"light": "#FF000055",
-					"highContrast": "#FF000055"
-				}
-			}
-		]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",

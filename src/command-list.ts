@@ -1,7 +1,7 @@
-import * as vscode from "vscode";
+import {workspace, Uri} from "vscode";
 
-export async function list () : Promise<vscode.Uri[]> {
-    let adrs = await vscode.workspace.findFiles('**/*ADR*.md');
-    adrs.map((value) => console.log(value));
+export async function list () : Promise<Uri[]> {
+    const prefix = workspace.getConfiguration("adrutilities").get("adrFilePrefix");
+    let adrs = await workspace.findFiles('**/*'+prefix+'*.md');
     return adrs;
 }
