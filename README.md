@@ -1,6 +1,6 @@
 # ADR Utilities
 
-ADR Utilities is a toolset for create and mange your Architecture Decision Records.
+ADR Utilities is a toolset for create and manage your Architecture Decision Records.
 
 Why another extension ? Because it manages multiple ADR directories and follows its own rules for naming and managing content.
 
