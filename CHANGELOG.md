@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.1.1]
+
+- Correct filepaths generations for Windows OS
+
 ## [0.1]
 
 - Initial release

@@ -7,7 +7,7 @@
 		"url": "https://github.com/fpouyez/AdrUtilities"
 	},
 	"publisher": "FredericPouyez",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"license": "CECILL-2.0",
 	"engines": {
 		"vscode": "^1.74.0"

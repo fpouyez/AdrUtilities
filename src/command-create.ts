@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as adrStrings from "./adr-string-const";
+import { convertSeparatorsOnUri, separator } from "./adr-filepath";
 
 const padZero = (num: number, pad: number) => num.toString().padStart(pad, "0");
 
@@ -35,7 +36,8 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 		}
 	}
 
-	let segments = uri.fsPath.split("/");
+	const sep = separator();
+	let segments = uri.fsPath.split(sep);
 	let lastDirName;
 	let lastSegment = segments.at(-1);
 
@@ -56,7 +58,7 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 
 	uri = vscode.Uri.parse(
 		segments.reduce((acc, segment) => {
-			return acc + segment + "/";
+			return acc + segment + sep;
 		})
 	);
 
@@ -64,7 +66,8 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 		let adrTitle = await askForTitle();
 		if (!!adrTitle) {
 			let today = concatDate();
-			let fullPath = createAdrFullPath(uri, adrTitle, today);
+			let uriPath = createAdrFullPath(uri, adrTitle, today);
+			let fullPath = convertSeparatorsOnUri(uriPath);
 			createAdrFile(fullPath);
 		}
 	}
