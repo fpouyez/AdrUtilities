@@ -18,3 +18,11 @@ export function convertSeparatorsOnUri(path :Uri):Uri {
     const sep = separator();
     return Uri.parse(path.fsPath.replace('/', sep).replace('\\', sep));
 }
+
+export function buildUriToFetchFile(path : string): Uri {
+    const os = require('os');
+    if(os.platform() === 'win32'){
+        return Uri.joinPath(Uri.parse('file:\\\\'), path);
+    }
+    return Uri.parse(path);
+}

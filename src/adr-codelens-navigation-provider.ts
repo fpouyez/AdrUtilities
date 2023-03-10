@@ -58,7 +58,7 @@ export class AdrCodelensNavigationProvider implements CodeLensProvider {
 			}
 
 			const uri = await this.findAdrUri(editor, codeLens);
-
+			console.log('CodeLens - ADR Uri : '+uri);
 			if (uri) {
 				codeLens.command = new CodeLensNavigationCommand(uri);
 				return codeLens;

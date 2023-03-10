@@ -22,6 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	vscode.commands.registerCommand("adrutilities.codelensNavigation", (args: any) => {
     vscode.workspace.openTextDocument(args).then(doc => {
+		console.log('Open by CodeLens : '+doc);
       vscode.window.showTextDocument(doc);
     });
 	});
