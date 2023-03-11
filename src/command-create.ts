@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as adrStrings from "./adr-string-const";
-import { convertSeparatorsOnUri, separator } from "./adr-filepath";
+import { convertSeparators, convertSeparatorsOnUri, separator } from "./adr-filepath";
 
 const padZero = (num: number, pad: number) => num.toString().padStart(pad, "0");
 
@@ -23,6 +23,7 @@ const askForTitle = () =>
 	});
 
 export async function createAdr(uri: vscode.Uri): Promise<void> {
+	console.log("Create initial dir : "+uri);
 	if (!uri) {
 		let parentDirectory = vscode.window.showOpenDialog({
 			canSelectFiles: false,
@@ -36,8 +37,7 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 		}
 	}
 
-	const sep = separator();
-	let segments = uri.fsPath.split(sep);
+	let segments = convertSeparators(uri.fsPath).split(separator);
 	let lastDirName;
 	let lastSegment = segments.at(-1);
 
@@ -48,7 +48,7 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 		lastDirName = lastSegment;
 	}
 
-	vscode.window.showInformationMessage(lastDirName ? lastDirName : "rien");
+	console.log("LastDirName : "+ lastDirName ? lastDirName : "rien");
 
 	let config = vscode.workspace.getConfiguration("adrutilities");
 
@@ -58,16 +58,19 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 
 	uri = vscode.Uri.parse(
 		segments.reduce((acc, segment) => {
-			return acc + segment + sep;
+			return acc + segment + separator;
 		})
 	);
 
 	if (!!uri) {
+		console.log("Create in directory : "+uri);
 		let adrTitle = await askForTitle();
 		if (!!adrTitle) {
 			let today = concatDate();
 			let uriPath = createAdrFullPath(uri, adrTitle, today);
+			console.log("Create uriPath : "+uriPath);
 			let fullPath = convertSeparatorsOnUri(uriPath);
+			console.log("Create : "+fullPath.fsPath);
 			createAdrFile(fullPath);
 		}
 	}
