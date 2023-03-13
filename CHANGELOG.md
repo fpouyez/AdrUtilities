@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.1.2]
+
+- Correct filepaths management using vscode.Uri only (remove node os package).
+
 ## [0.1.1]
 
 - Correct filepaths generations for Windows OS

@@ -60,6 +60,10 @@ None
 
 ## Release Notes
 
+### 0.1.2
+
+Corrections in file path management.
+
 ### 0.1
 
 Initial release of ADR Utilities

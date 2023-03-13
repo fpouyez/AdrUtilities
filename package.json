@@ -2,10 +2,6 @@
 	"name": "adrutilities",
 	"displayName": "ADR Utilities",
 	"description": "Some tools for manage ADR in your projects",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/fpouyez/AdrUtilities"
-	},
 	"publisher": "FredericPouyez",
 	"version": "0.1.1",
 	"license": "CECILL-2.0",
@@ -13,8 +9,20 @@
 		"vscode": "^1.74.0"
 	},
 	"categories": [
-		"Other"
+		"Other",
+		"Visualization"
 	],
+	"galleryBanner": {
+		"color": "#2b6ca7",
+		"theme": "dark"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fpouyez/AdrUtilities"
+	},
+	"bugs": {
+		"url": "https://github.com/fpouyez/AdrUtilities/issues"
+	  },
 	"activationEvents": [
 		"*"
 	],
