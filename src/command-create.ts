@@ -48,7 +48,7 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 		lastDirName = lastSegment;
 	}
 
-	console.log("LastDirName : "+ lastDirName ? lastDirName : "rien");
+	console.log("LastDirName : "+ (lastDirName ? lastDirName : "rien"));
 
 	let config = vscode.workspace.getConfiguration("adrutilities");
 
