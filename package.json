@@ -74,18 +74,26 @@
 			"properties": {
 				"adrutilities.adrDirectoryName": {
 					"type": "string",
-					"default": "ADR",
+					"default": "adr",
 					"description": "Name of ADR folders used by this extension."
 				},
 				"adrutilities.adrFilePrefix": {
 					"type": "string",
-					"default": "ADR_",
+					"default": "adr_",
 					"description": "Prefix use in ADR filename, to differenciate ADR files from other MD files."
 				},
 				"adrutilities.enableCodeLensNavigation": {
 					"type": "boolean",
-					"default": "ADR",
+					"default": "true",
 					"description": "Enable CodeLens navigation to ADRs."
+				},
+				"adrutilities.currentTemplate": {
+					"type": "string",
+					"default": "defaultTemplateFrench",
+					"enum": ["defaultTemplateFrench","defaultTemplateEnglish"],
+					"enumDescriptions": [
+						"A custom template created to fill our needs, in french.",
+						"A custom template created to fill our needs, in english."]
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as adrStrings from "./adr-string-const";
-import { convertSeparators, convertSeparatorsOnUri, separator } from "./adr-filepath";
+import { convertSeparators, convertSeparatorsOnUri, separator, findLastDirectoryName } from "./adr-filepath";
 
 const padZero = (num: number, pad: number) => num.toString().padStart(pad, "0");
 
@@ -14,13 +14,28 @@ const createAdrFullPath = (directory: vscode.Uri, adrTitle: string, todayDate: s
 	return vscode.Uri.joinPath(directory, prefix + adrTitle + "_" + todayDate + ".md");
 };
 
-const createAdrFile = (adrFullPath: vscode.Uri) => vscode.workspace.fs.writeFile(adrFullPath, Buffer.from(adrStrings.template));
+const createAdrFile = (adrFullPath: vscode.Uri) => {
+	let template: string = pickTemplate();
+	vscode.workspace.fs.writeFile(adrFullPath, Buffer.from(template));
+};
 
 const askForTitle = () =>
 	vscode.window.showInputBox({
 		title: adrStrings.adrNameInputBoxPlaceHolder,
 		placeHolder: adrStrings.adrNameInputBoxPlaceHolder,
 	});
+
+const pickTemplate = () => {
+	const templateString = vscode.workspace.getConfiguration("adrutilities").get("currentTemplate");
+	let template: string;
+	if (templateString === 'defaultTemplateFrench') {
+		template = adrStrings.defaultTemplateFrench;
+	}
+	else {
+		template = adrStrings.defaultTemplateEnglish;
+	}
+	return template;
+};
 
 export async function createAdr(uri: vscode.Uri): Promise<void> {
 	console.log("Create initial dir : "+uri);
@@ -38,15 +53,7 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 	}
 
 	let segments = convertSeparators(uri.fsPath).split(separator);
-	let lastDirName;
-	let lastSegment = segments.at(-1);
-
-	if (!!lastSegment && lastSegment.indexOf(".") > 0) {
-		segments.pop();
-		lastDirName = segments.at(-1);
-	} else {
-		lastDirName = lastSegment;
-	}
+	let lastDirName = findLastDirectoryName(segments);
 
 	console.log("LastDirName : "+ (lastDirName ? lastDirName : "rien"));
 
@@ -75,3 +82,4 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 		}
 	}
 }
+
