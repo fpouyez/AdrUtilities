@@ -138,8 +138,5 @@
 			"@semantic-release/github"
 		]
 	},
-	"private": true,
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/fpouyez/AdrUtilities.git"
+	"private": true
 }
