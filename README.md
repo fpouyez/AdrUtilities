@@ -1,4 +1,16 @@
-# ADR Utilities
+<h1 align="center" style="border-bottom: none;">ADR Utilities</h1>
+<h3 align="center">Toolset for create and manage your ADRs</h3>
+<p align="center">
+  <a href="https://github.com/fpouyez/AdrUtilities/actions/workflows/ci.yml">
+    <img alt="Build states" src="https://github.com/fpouyez/AdrUtilities/actions/workflows/ci.yml/badge.svg">
+  </a>
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/fpouyez/AdrUtilities">
+    <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/fpouyez/AdrUtilities/badge">
+  </a>
+  <a href="#badge">
+    <img alt="adr-utilities:typescript" src="https://img.shields.io/badge/adr--utilities-typescript-0038e0?logo=adr-utilities">
+  </a>
+</p>
 
 ADR Utilities is a toolset for create and manage your Architecture Decision Records.
 

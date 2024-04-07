@@ -5,7 +5,7 @@
 	"icon": "images/icon.png",
 	"publisher": "FredericPouyez",
 	"version": "0.1.4",
-	"license": "CECILL-2.0",
+	"license": "MIT",
 	"engines": {
 		"vscode": "^1.74.0"
 	},
