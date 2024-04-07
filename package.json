@@ -106,6 +106,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
+		"release": {"branches": "master","verifyConditions": ,"publish": ,"success": ,"fail": },
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js"
 	},
