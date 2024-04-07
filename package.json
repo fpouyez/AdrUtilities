@@ -3,7 +3,7 @@
 	"displayName": "ADR Utilities",
 	"description": "Some tools for manage ADR in your projects",
 	"publisher": "FredericPouyez",
-	"version": "0.1.2",
+	"version": "0.1.4",
 	"license": "CECILL-2.0",
 	"engines": {
 		"vscode": "^1.74.0"
