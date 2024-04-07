@@ -90,10 +90,14 @@
 				"adrutilities.currentTemplate": {
 					"type": "string",
 					"default": "defaultTemplateFrench",
-					"enum": ["defaultTemplateFrench","defaultTemplateEnglish"],
+					"enum": [
+						"defaultTemplateFrench",
+						"defaultTemplateEnglish"
+					],
 					"enumDescriptions": [
 						"A custom template created to fill our needs, in french.",
-						"A custom template created to fill our needs, in english."]
+						"A custom template created to fill our needs, in english."
+					]
 				}
 			}
 		}
