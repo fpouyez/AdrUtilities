@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+      - alpha
+      - beta
+
+jobs:
+  test:
+    name: Test and lint
+    uses: fpouyez/AdrUtilities/.github/workflows/development.yml@main
+
+  publish:
+    name: Release and publish
+    needs: test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "🛡️ harden runner"
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
+      - name: "🔓 checkout"
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
+      - name: "⚙️ setup Node.js"
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: 20
+
+      - name: "📦 install dependencies"
+        run: npm install
+
+      - name: "📤 release preparation"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
+
+      - name: "📤 vscode release"
+        uses: JCofman/vscodeaction@611fec1de63d45fef75ab4f28e00021af09f67d1 # master
+        env:
+          PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
+        with:
+          args: publish -p $PUBLISHER_TOKEN 

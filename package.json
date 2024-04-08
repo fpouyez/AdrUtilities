@@ -2,7 +2,7 @@
 	"name": "adrutilities",
 	"displayName": "ADR Utilities",
 	"description": "Some tools for manage ADR in your projects",
-	"icon": "images/icon.png",
+	"icon": "images/vsicon.png",
 	"publisher": "FredericPouyez",
 	"version": "0.1.4",
 	"license": "MIT",
