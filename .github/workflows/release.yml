@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     name: Test and lint
-    uses: fpouyez/AdrUtilities/.github/workflows/development.yml@main
+    uses: fpouyez/AdrUtilities/.github/workflows/development.yml@master
 
   publish:
     name: Release and publish
