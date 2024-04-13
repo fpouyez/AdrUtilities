@@ -12,8 +12,8 @@ jobs:
     name: Test and lint
     uses: fpouyez/AdrUtilities/.github/workflows/development.yml@master
 
-  publish:
-    name: Release and publish
+  release:
+    name: Release
     needs: test
     runs-on: ubuntu-22.04
     steps:
@@ -33,12 +33,22 @@ jobs:
       - name: "📦 install dependencies"
         run: npm install
 
+      - name: Dry run to get the next release version
+        id: tag_version
+        run: |
+          export NEXT_TAG_VERSION=$(npx semantic-release --dry-run | grep 'The next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')
+          echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
+
       - name: "📤 release preparation"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 
+  publish:
+    needs: release
+    if: ${{ needs.release.outputs.new_tag_version != '' }}
+    runs-on: ubuntu-latest
+    steps:
       - name: "📤 vscode release"
         uses: JCofman/vscodeaction@611fec1de63d45fef75ab4f28e00021af09f67d1 # master
         env:
