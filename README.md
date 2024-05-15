@@ -2,7 +2,7 @@
 <h3 align="center">Toolset for create and manage your ADRs</h3>
 <p align="center">
   <a href="https://github.com/fpouyez/AdrUtilities/actions/workflows/ci.yml">
-    <img alt="Build states" src="https://github.com/fpouyez/AdrUtilities/actions/workflows/ci.yml/badge.svg">
+    <img alt="Build states" src="https://github.com/fpouyez/AdrUtilities/actions/workflows/release.yml/badge.svg">
   </a>
   <a href="https://securityscorecards.dev/viewer/?uri=github.com/fpouyez/AdrUtilities">
     <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/fpouyez/AdrUtilities/badge">
