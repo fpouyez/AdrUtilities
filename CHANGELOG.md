@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.1.4]
+
+Fix :
+
+* Update dependencies.
+
 ## [0.1.3]
 
 Features :
