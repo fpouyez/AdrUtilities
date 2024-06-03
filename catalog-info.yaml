@@ -4,13 +4,13 @@ metadata:
   name: AdrUtilities
   description: A Visual Studio Code extension to manage ADRs.
   annotations:
-     github.com/project-slug: fpouyez/AdrUtilities
+     github.com/project-slug: 'fpouyez/AdrUtilities'
   #   backstage.io/techdocs-ref: dir:.
   links:
     - url: https://marketplace.visualstudio.com/items?itemName=FredericPouyez.adrutilities
       title: AdrUtilities in marketplace
       icon: catalog
 spec:
-  type: VSCode extension
-  owner: user:default/fpouyez
+  type: library
+  owner: user:fpouyez
   lifecycle: production
