@@ -6,7 +6,7 @@ metadata:
   annotations:
      github.com/project-slug: fpouyez/AdrUtilities
   #   backstage.io/techdocs-ref: dir:.
-    links:
+  links:
     - url: https://marketplace.visualstudio.com/items?itemName=FredericPouyez.adrutilities
       title: AdrUtilities in marketplace
       icon: catalog
