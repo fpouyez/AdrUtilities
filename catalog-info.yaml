@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: AdrUtilities
+  description: A Visual Studio Code extension to manage ADRs.
+  annotations:
+     github.com/project-slug: fpouyez/AdrUtilities
+  #   backstage.io/techdocs-ref: dir:.
+spec:
+  type: VSCode extension
+  owner: user:default/fpouyez
+  lifecycle: production
