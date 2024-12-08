@@ -12,6 +12,7 @@ export class AdrCodelensNavigationProvider implements CodeLensProvider {
 	private codeLenses: CodeLens[] = [];
 	private regex: RegExp;
 
+	// Commentaire de construction
 	constructor() {
 		this.regex = adrRegexBuilder();
 	}
