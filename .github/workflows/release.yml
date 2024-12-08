@@ -49,14 +49,14 @@ jobs:
       #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       #   run: npx semantic-release
 
-  publish:
-    needs: release
-    if: ${{ needs.release.outputs.new_tag_version != '' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: "📤 vscode release"
-        uses: JCofman/vscodeaction@611fec1de63d45fef75ab4f28e00021af09f67d1 # master
-        env:
-          PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
-        with:
-          args: publish -p $PUBLISHER_TOKEN 
+  # publish:
+  #   needs: release
+  #   if: ${{ needs.release.outputs.new_tag_version != '' }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: "📤 vscode release"
+  #       uses: JCofman/vscodeaction@611fec1de63d45fef75ab4f28e00021af09f67d1 # master
+  #       env:
+  #         PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
+  #       with:
+  #         args: publish -p $PUBLISHER_TOKEN 
