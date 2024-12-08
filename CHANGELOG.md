@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.1.5]
+
+Fix :
+
+* Update dependencies.
+
+
 ## [0.1.4]
 
 Fix :
