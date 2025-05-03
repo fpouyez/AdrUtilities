@@ -23,6 +23,12 @@
       {
         "assets": ["package.json", "package-lock.json", "CHANGELOG.md"]
       }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
     ]
   ]
 }
