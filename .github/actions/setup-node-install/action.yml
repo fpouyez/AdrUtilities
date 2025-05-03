@@ -17,7 +17,8 @@ runs:
         node-version: 20
 
     - name: "📦 install dependencies"
-      run: npm install    
+      shell: bash
+      run: npm install
 
     # - name: Checkout repository
     #   uses: actions/checkout@v4
