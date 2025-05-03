@@ -52,16 +52,37 @@ jobs:
       #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       #   run: npx semantic-release
 
+  # publish:
+  #   needs: release
+  #   if: ${{ needs.release.outputs.new_tag_version != '' }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Install vsce
+  #       run: npm install -g vsce
+  #     - name: "📤 vscode release"
+  #       uses: JCofman/vscodeaction@611fec1de63d45fef75ab4f28e00021af09f67d1 # master
+  #       env:
+  #         PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
+  #       with:
+  #         args: publish -p $PUBLISHER_TOKEN 
+
   publish:
     needs: release
     if: ${{ needs.release.outputs.new_tag_version != '' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Install vsce
+      - name: "🔓 checkout"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "⚙️ setup Node.js"
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: 20
+
+      - name: "📦 install vsce"
         run: npm install -g vsce
-      - name: "📤 vscode release"
-        uses: JCofman/vscodeaction@611fec1de63d45fef75ab4f28e00021af09f67d1 # master
+
+      - name: "📤 Publish VSCode extension"
         env:
           PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
-        with:
-          args: publish -p $PUBLISHER_TOKEN 
+        run: vsce publish -p $PUBLISHER_TOKEN
