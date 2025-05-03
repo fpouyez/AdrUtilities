@@ -15,6 +15,13 @@
         }
       }
     ],
-    "@semantic-release/release-notes-generator"
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/github",
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["package.json", "package-lock.json", "CHANGELOG.md"]
+      }
+    ]
   ]
 }

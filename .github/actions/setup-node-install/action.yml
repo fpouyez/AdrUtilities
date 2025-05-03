@@ -1,0 +1,32 @@
+name: "Checkout, Setup Node, Install dependencies"
+description: "Checkout repository, setup Node.js and install npm dependencies"
+inputs:
+  node-version:
+    description: "Node.js version to use"
+    required: true
+    default: "20"
+runs:
+  using: "composite"
+  steps:
+    - name: "🔓 checkout"
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: "⚙️ setup Node.js"
+      uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      with:
+        node-version: 20
+
+    - name: "📦 install dependencies"
+      run: npm install    
+
+    # - name: Checkout repository
+    #   uses: actions/checkout@v4
+
+    # - name: Setup Node.js
+    #   uses: actions/setup-node@v4
+    #   with:
+    #     node-version: ${{ inputs.node-version }}
+
+    # - name: Install dependencies
+    #   shell: bash
+    #   run: npm install
