@@ -50,7 +50,7 @@ If the name doesn't match a real ADR, the CodeLens annotation marks it as not na
 
 ## Requirements
 
-vscode : 1.74.0 or more
+vscode : 1.92.0 or more
 
 ## Extension Settings
 
@@ -89,14 +89,4 @@ None
 
 ## Release Notes
 
-### 0.1.3
-
-An english version of the ADR template is available, with a config entry to choose the used template.
-
-### 0.1.2
-
-Corrections in file path management.
-
-### 0.1
-
-Initial release of ADR Utilities
+See [Changelog](./CHANGELOG.md)
