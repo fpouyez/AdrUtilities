@@ -14,7 +14,7 @@ jobs:
 
   release:
     name: Release
-    # needs: test
+    needs: test
     runs-on: ubuntu-22.04
     outputs:
       # Pour exporter au niveau des jobs, pour que le job suivnat ait l'information.
@@ -29,16 +29,6 @@ jobs:
       - uses: ./.github/actions/setup-node-install
         with:
           node-version: 20
-      # - name: "🔓 checkout"
-      #   uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      # - name: "⚙️ setup Node.js"
-      #   uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      #   with:
-      #     node-version: 20
-
-      # - name: "📦 install dependencies"
-      #   run: npm install
 
       # La première ligne npx semantic-release --dry-run force l'installation.
       - name: Dry run to get the next release version
@@ -50,37 +40,10 @@ jobs:
           export NEXT_TAG_VERSION=$(npx semantic-release --dry-run | grep 'The next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')
           echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
 
-      # - name: "📤 release preparation"
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.SEM_RELEASE_PAT }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #   run: npx semantic-release
-      # - name: Semantic Release 🔥
-      #   uses: cycjimmy/semantic-release-action@v3
-      #   with:
-      #     extra_plugins: |
-      #       @semantic-release/commit-analyzer
-      #       @semantic-release/release-notes-generator
-      #       @semantic-release/changelog
-      #       @semantic-release/npm
-      #       @semantic-release/git
-      #       @semantic-release/github
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # publish:
-  #   needs: release
-  #   if: ${{ needs.release.outputs.new_tag_version != '' }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Install vsce
-  #       run: npm install -g vsce
-  #     - name: "📤 vscode release"
-  #       uses: JCofman/vscodeaction@611fec1de63d45fef75ab4f28e00021af09f67d1 # master
-  #       env:
-  #         PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
-  #       with:
-  #         args: publish -p $PUBLISHER_TOKEN 
+      - name: Semantic Release 🔥
+        uses: cycjimmy/semantic-release-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEM_RELEASE_PAT }}
 
   publish:
     needs: release
@@ -91,17 +54,6 @@ jobs:
       - uses: ./.github/actions/setup-node-install
         with:
           node-version: 20
-      # - name: "🔓 checkout"
-      #   uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      # - name: "⚙️ setup Node.js"
-      #   uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      #   with:
-      #     node-version: 20
-
-      # # Installation des dépendances dans chaque job
-      # - name: "📦 install dependencies"
-      #   run: npm install    
       
       - name: "📦 install vsce"
         run: npm install -g vsce

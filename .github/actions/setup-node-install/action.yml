@@ -19,15 +19,3 @@ runs:
     - name: "📦 install dependencies"
       shell: bash
       run: npm install
-
-    # - name: Checkout repository
-    #   uses: actions/checkout@v4
-
-    # - name: Setup Node.js
-    #   uses: actions/setup-node@v4
-    #   with:
-    #     node-version: ${{ inputs.node-version }}
-
-    # - name: Install dependencies
-    #   shell: bash
-    #   run: npm install

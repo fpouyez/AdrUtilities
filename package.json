@@ -3,7 +3,7 @@
 	"displayName": "ADR Utilities",
 	"description": "Some tools for manage ADR in your projects",
 	"icon": "images/vsicon.png",
-	"publisher": "Frederic Pouyez",
+	"publisher": "FredericPouyez",
 	"version": "1.0.0",
 	"license": "MIT",
 	"engines": {
