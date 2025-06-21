@@ -16,14 +16,25 @@ ADR Utilities is a toolset for create and manage your Architecture Decision Reco
 
 Why another extension ? Because it manages multiple ADR directories (which is essential in huge projects / mono-repository projects / multiple libraries projects) and follows its own rules for naming and managing content.
 
+## 🔒 Sécurité
+
+Cette extension implémente des mesures de sécurité robustes pour protéger contre :
+
+- **Injection de chemin** : Validation stricte des chemins de fichiers
+- **Injection d'expressions régulières** : Échappement automatique des caractères spéciaux
+- **Attaques par déni de service** : Limitation du nombre de fichiers et correspondances
+- **Validation des entrées** : Nettoyage et validation de toutes les entrées utilisateur
+
+Voir [SECURITY.md](./SECURITY.md) pour plus de détails sur les mesures de sécurité.
+
 ## Conventions
 
 This extension manipulates ADR files by a naming conventions, which follows this pattern :
 ```{prefix}{shortTitle}_{timestamp}.md```
 
-* *prefix* : Identifies ADR among all yous markdown files. See [the adrFilePrefix config](#adrfileprefix).
-* *shortTitle* : Subject of your ADR. Ex : 'WhyWeUseAPatternForADR'.
-* *timestamp* : A way to avoid collision among your ADRs. More convenient than an integer.
+- *prefix* : Identifies ADR among all yous markdown files. See [the adrFilePrefix config](#adrfileprefix).
+- *shortTitle* : Subject of your ADR. Ex : 'WhyWeUseAPatternForADR'.
+- *timestamp* : A way to avoid collision among your ADRs. More convenient than an integer.
 
 So by default :
 ```adr_WhyWeUseAPatternForADR_20230225.md```
@@ -78,8 +89,8 @@ Template used to fill the created ADR.
 
 Possible values :
 
-* *'defaultTemplateFrench'* : a custom template created to fill our needs, in french.
-* *'defaultTemplateEnglish'* : the same custom template, in english.
+- *'defaultTemplateFrench'* : a custom template created to fill our needs, in french.
+- *'defaultTemplateEnglish'* : the same custom template, in english.
 
 Default : *defaultTemplateFrench*.
 

@@ -1,0 +1,34 @@
+# .cursorrules pour extension VS Code en TypeScript
+
+# Style général
+- Utilise la syntaxe TypeScript moderne (ES2020+).
+- Privilégie les fonctions fléchées pour les callbacks.
+- Toujours typer explicitement les paramètres et les valeurs de retour des fonctions, sauf pour les composants JSX.
+- Utilise les interfaces pour décrire les objets complexes.
+
+# Structure de projet
+- Place le code source dans le dossier src/.
+- Les fichiers d’entrée doivent être nommés extension.ts ou main.ts.
+- Utilise un dossier test/ pour les tests unitaires.
+
+# Spécificités VS Code
+- Utilise l’API officielle vscode pour toutes les interactions avec l’éditeur.
+- Ajoute systématiquement des commentaires JSDoc sur les fonctions exportées et les classes publiques.
+- Pour les commandes, déclare-les dans package.json et documente-les dans le code.
+- Préfère l’utilisation de vscode.commands.registerCommand pour enregistrer les commandes.
+
+# Bonnes pratiques TypeScript
+- Active strictNullChecks et noImplicitAny.
+- Utilise const et let, jamais var.
+- Préfère les imports explicites (import { X } from 'module').
+
+# Documentation & commentaires
+- Ajoute un commentaire JSDoc pour chaque fonction exportée, interface et classe publique.
+- Documente les paramètres, les valeurs de retour et les effets de bord.
+
+# Tests
+- Utilise Jest ou Mocha pour les tests unitaires.
+- Place les fichiers de test dans test/ et nomme-les *.test.ts.
+
+# Exemples de code
+- Lorsque tu génères des exemples, commence toujours par l’import de vscode :
