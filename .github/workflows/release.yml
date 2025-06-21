@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       # Pour exporter au niveau des jobs, pour que le job suivnat ait l'information.
-      new_tag_version: ${{ steps.tag_version.outputs.new_tag_version }}
+      new_tag_version: ${{ steps.semantic_release.outputs.new_release_version }}
     steps:
       - name: "🛡️ harden runner"
         uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
@@ -30,24 +30,22 @@ jobs:
         with:
           node-version: 20
 
-      # La première ligne npx semantic-release --dry-run force l'installation.
-      - name: Dry run to get the next release version
-        id: tag_version
+      # Garde-fou : vérifier qu'une release sera créée
+      - name: Dry run to verify release will be created
         env:
           GITHUB_TOKEN: ${{ secrets.SEM_RELEASE_PAT }}
         run: |
-          npx semantic-release --dry-run
-          export NEXT_TAG_VERSION=$(npx semantic-release --dry-run | grep 'The next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')
-          echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
+          npx semantic-release --dry-run | grep -q "The next release version is" || (echo "No release will be created" && exit 1)
 
       - name: Semantic Release 🔥
+        id: semantic_release
         uses: cycjimmy/semantic-release-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.SEM_RELEASE_PAT }}
 
   publish:
     needs: release
-    if: ${{ needs.release.outputs.new_tag_version != '' }}
+    if: ${{ needs.release.outputs.new_tag_version != '' && needs.release.outputs.new_tag_version != 'undefined' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
