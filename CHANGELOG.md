@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/fpouyez/AdrUtilities/compare/v1.1.0...v1.1.1) (2025-06-21)
+
+
+### Bug Fixes
+
+* extension packaging ([5d5a64c](https://github.com/fpouyez/AdrUtilities/commit/5d5a64c61b57c91ab8c704181bfdd08b674243e1))
+
 # Change Log
 
 ## [1.1.0] - 2024-01-XX
