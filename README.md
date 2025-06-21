@@ -27,7 +27,7 @@ This extension implements robust security measures to protect against:
 
 See [SECURITY.md](./SECURITY.md) for more details about security measures.
 
-## Conventions
+## 📋 Conventions
 
 This extension manipulates ADR files by a naming conventions, which follows this pattern :
 ```{prefix}{shortTitle}_{timestamp}.md```
@@ -39,7 +39,7 @@ This extension manipulates ADR files by a naming conventions, which follows this
 So by default :
 ```adr_WhyWeUseAPatternForADR_20230225.md```
 
-## Features
+## ✨ Features
 
 ### Create an ADR
 
@@ -59,11 +59,11 @@ Each mention of ADR in a text editor (which matches the naming pattern) enables 
 
 If the name doesn't match a real ADR, the CodeLens annotation marks it as not navigable.
 
-## Requirements
+## 📋 Requirements
 
 vscode : 1.92.0 or more
 
-## Extension Settings
+## ⚙️ Extension Settings
 
 ### adrDirectoryName
 
@@ -94,10 +94,10 @@ Possible values :
 
 Default : *defaultTemplateFrench*.
 
-## Known Issues
+## 🐛 Known Issues
 
 None
 
-## Release Notes
+## 📝 Release Notes
 
 See [Changelog](./CHANGELOG.md)
