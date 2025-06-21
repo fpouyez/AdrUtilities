@@ -51,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: v${{ needs.release.outputs.new_tag_version }}
       - uses: ./.github/actions/setup-node-install
         with:
           node-version: 20
