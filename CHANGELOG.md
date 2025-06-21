@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/fpouyez/AdrUtilities/compare/v1.1.1...v1.1.2) (2025-06-21)
+
+
+### Bug Fixes
+
+* get package number from last tag ([18da834](https://github.com/fpouyez/AdrUtilities/commit/18da83492aa120a2ee2390bf5c2409233f866adf))
+
 ## [1.1.1](https://github.com/fpouyez/AdrUtilities/compare/v1.1.0...v1.1.1) (2025-06-21)
 
 
