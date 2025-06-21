@@ -29,7 +29,9 @@ suite('ADR FilePath Test Suite', () => {
 	test('Convert separators on URI should work with valid URI', async () => {
 		const uri = vscode.Uri.file("test/path/To/Convert");
 		const result = convertSeparatorsOnUri(uri);
-		assert(result.fsPath.endsWith("test/path/To/Convert"));
+		// Normalise les séparateurs pour la comparaison multiplateforme
+		const normalizedResult = result.fsPath.replace(/\\/g, '/');
+		assert(normalizedResult.endsWith("test/path/To/Convert"));
 	});
 
 	test('Convert separators on URI should throw error for invalid URI', async () => {
