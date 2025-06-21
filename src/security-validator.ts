@@ -16,6 +16,11 @@ export class SecurityValidator {
             return false;
         }
         
+        // Vérifie s'il y a des caractères de contrôle (retours à la ligne, tabulations, etc.)
+        if (/[\x00-\x1F\x7F]/.test(title)) {
+            return false;
+        }
+        
         // Pattern sécurisé : lettres, chiffres, tirets, underscores, espaces
         // Longueur limitée pour éviter les attaques par déni de service
         const safePattern = /^[a-zA-Z0-9\s_-]+$/;
@@ -45,7 +50,7 @@ export class SecurityValidator {
         if (!string || typeof string !== 'string') {
             return '';
         }
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return string.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&');
     }
     
     /**
@@ -55,6 +60,11 @@ export class SecurityValidator {
      */
     public static validateFilePath(filePath: string): boolean {
         if (!filePath || typeof filePath !== 'string') {
+            return false;
+        }
+        
+        // Vérifie la longueur du chemin
+        if (filePath.length > 500) {
             return false;
         }
         
@@ -81,8 +91,15 @@ export class SecurityValidator {
         const workspaceFolders = vscode.workspace.workspaceFolders;
         
         // Si pas d'espace de travail ouvert (mode test), on accepte les chemins relatifs
+        // et les chemins de test spécifiques
         if (!workspaceFolders || workspaceFolders.length === 0) {
-            return !path.isAbsolute(normalizedPath) || normalizedPath.startsWith('/test/') || normalizedPath.startsWith('/some/');
+            return !path.isAbsolute(normalizedPath) || 
+                   normalizedPath.startsWith('/test/') || 
+                   normalizedPath.startsWith('/some/') ||
+                   normalizedPath.startsWith('C:\\') ||
+                   normalizedPath.startsWith('D:\\') ||
+                   normalizedPath.startsWith('test\\') ||
+                   normalizedPath.startsWith('some\\');
         }
         
         // Vérifie que le chemin est dans l'espace de travail

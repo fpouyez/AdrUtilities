@@ -23,10 +23,26 @@ const createAdrFullPath = (directory: vscode.Uri, adrTitle: string, todayDate: s
 	return vscode.Uri.joinPath(directory, fileName);
 };
 
-const createAdrFile = async (adrFullPath: vscode.Uri) => {
+/**
+ * Interface pour l'écriture de fichiers (injectable pour les tests)
+ */
+export interface FileWriter {
+	writeFile(uri: vscode.Uri, content: Buffer): Promise<void>;
+}
+
+/**
+ * Implémentation par défaut utilisant l'API VS Code
+ */
+export class VSCodeFileWriter implements FileWriter {
+	async writeFile(uri: vscode.Uri, content: Buffer): Promise<void> {
+		await vscode.workspace.fs.writeFile(uri, content);
+	}
+}
+
+const createAdrFile = async (adrFullPath: vscode.Uri, fileWriter: FileWriter = new VSCodeFileWriter()) => {
 	try {
 		let template: string = pickTemplate();
-		await vscode.workspace.fs.writeFile(adrFullPath, Buffer.from(template));
+		await fileWriter.writeFile(adrFullPath, Buffer.from(template));
 	} catch (error) {
 		throw new Error(`Erreur lors de la création du fichier ADR: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
 	}
@@ -59,7 +75,7 @@ const pickTemplate = () => {
 	return template;
 };
 
-export async function createAdr(uri: vscode.Uri): Promise<void> {
+export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VSCodeFileWriter()): Promise<void> {
 	try {
 		console.log("Create initial dir : "+uri);
 		if (!uri) {
@@ -114,7 +130,7 @@ export async function createAdr(uri: vscode.Uri): Promise<void> {
 				console.log("Create uriPath : "+uriPath);
 				let fullPath = convertSeparatorsOnUri(uriPath);
 				console.log("Create : "+fullPath.fsPath);
-				await createAdrFile(fullPath);
+				await createAdrFile(fullPath, fileWriter);
 				
 				vscode.window.showInformationMessage(`ADR créé avec succès: ${adrTitle}`);
 			}

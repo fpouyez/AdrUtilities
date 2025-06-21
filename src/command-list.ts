@@ -13,7 +13,15 @@ export async function list (): Promise<Uri[]> {
             const safePrefix = "adr_";
             const pattern = '**'+separator+'*'+SecurityValidator.escapeRegex(safePrefix)+'*.md';
             console.log('List - GlobPattern : '+pattern);
-            let adrs = await workspace.findFiles(pattern);
+            let adrs = await workspace.findFiles(pattern, '**/node_modules/**');
+            
+            // Limite le nombre de fichiers pour éviter les attaques par déni de service
+            const maxFiles = 1000;
+            if (adrs.length > maxFiles) {
+                console.warn(`Nombre de fichiers limité à ${maxFiles} pour des raisons de sécurité`);
+                adrs = adrs.slice(0, maxFiles);
+            }
+            
             return adrs.map(value => {
                 console.log('List - ADR before convert : '+value.fsPath);
                 console.log('List - ADR after convert : '+ convertSeparators(value.fsPath));
@@ -25,9 +33,14 @@ export async function list (): Promise<Uri[]> {
         const pattern = '**'+separator+'*'+escapedPrefix+'*.md';
         console.log('List - GlobPattern : '+pattern);
         
+        let adrs = await workspace.findFiles(pattern, '**/node_modules/**');
+        
         // Limite le nombre de fichiers pour éviter les attaques par déni de service
         const maxFiles = 1000;
-        let adrs = await workspace.findFiles(pattern, '**/node_modules/**', maxFiles);
+        if (adrs.length > maxFiles) {
+            console.warn(`Nombre de fichiers limité à ${maxFiles} pour des raisons de sécurité`);
+            adrs = adrs.slice(0, maxFiles);
+        }
         
         return adrs.map(value => {
             try {
