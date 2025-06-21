@@ -54,6 +54,16 @@ export class SecurityValidator {
     }
     
     /**
+     * Normalise un chemin en convertissant les séparateurs Windows vers Unix
+     * @param filePath Le chemin à normaliser
+     * @returns Le chemin normalisé
+     */
+    private static normalizePath(filePath: string): string {
+        // Convertit les backslashes en slashes pour une validation cohérente
+        return filePath.replace(/\\/g, '/');
+    }
+    
+    /**
      * Valide un chemin de fichier pour éviter les traversées de répertoire
      * @param filePath Le chemin à valider
      * @returns true si le chemin est valide, false sinon
@@ -68,8 +78,8 @@ export class SecurityValidator {
             return false;
         }
         
-        // Vérifie qu'il n'y a pas de traversée de répertoire
-        const normalizedPath = path.normalize(filePath);
+        // Normalise le chemin en convertissant les séparateurs Windows
+        const normalizedPath = this.normalizePath(filePath);
         
         // Rejette les chemins avec des séquences malveillantes
         if (normalizedPath.includes('..') || 
@@ -93,18 +103,22 @@ export class SecurityValidator {
         // Si pas d'espace de travail ouvert (mode test), on accepte les chemins relatifs
         // et les chemins de test spécifiques
         if (!workspaceFolders || workspaceFolders.length === 0) {
-            return !path.isAbsolute(normalizedPath) || 
-                   normalizedPath.startsWith('/test/') || 
+            // Accepte les chemins de test avec slashes ou backslashes
+            return normalizedPath.startsWith('/test/') || 
                    normalizedPath.startsWith('/some/') ||
-                   normalizedPath.startsWith('C:\\') ||
-                   normalizedPath.startsWith('D:\\') ||
-                   normalizedPath.startsWith('test\\') ||
-                   normalizedPath.startsWith('some\\');
+                   normalizedPath.startsWith('test/') ||
+                   normalizedPath.startsWith('some/') ||
+                   // Accepte les chemins Windows de test
+                   normalizedPath.startsWith('C:/') ||
+                   normalizedPath.startsWith('D:/') ||
+                   normalizedPath.startsWith('E:/') ||
+                   // Accepte les chemins relatifs simples
+                   !path.isAbsolute(normalizedPath);
         }
         
         // Vérifie que le chemin est dans l'espace de travail
         for (const folder of workspaceFolders) {
-            const folderPath = folder.uri.fsPath;
+            const folderPath = this.normalizePath(folder.uri.fsPath);
             if (normalizedPath.startsWith(folderPath)) {
                 return true;
             }

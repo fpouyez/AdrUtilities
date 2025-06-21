@@ -9,10 +9,19 @@ export const separator = '/';
  * @returns Le chemin converti ou une chaîne vide si invalide
  */
 export function convertSeparators(path: string): string {
-    if (!SecurityValidator.validateFilePath(path)) {
+    if (!path || typeof path !== 'string') {
         throw new Error('Chemin de fichier invalide ou en dehors de l\'espace de travail');
     }
-    return path.replace(/\\/g, "/");
+    
+    // Normalise d'abord le chemin en convertissant les backslashes
+    const normalizedPath = path.replace(/\\/g, "/");
+    
+    // Valide le chemin normalisé
+    if (!SecurityValidator.validateFilePath(normalizedPath)) {
+        throw new Error('Chemin de fichier invalide ou en dehors de l\'espace de travail');
+    }
+    
+    return normalizedPath;
 }
 
 /**
