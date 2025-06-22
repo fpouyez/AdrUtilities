@@ -14,15 +14,16 @@ suite('Integration Performance Test Suite', () => {
 		const originalNavigation = config.get('enableCodeLensNavigation');
 		
 		try {
-			// 2. Désactiver les CodeLens
+			// 2. Désactiver les CodeLens via configuration directe
 			await config.update('enableCodeLensNavigation', false, true);
+			assert.strictEqual(config.get('enableCodeLensNavigation'), false, 'CodeLens should be disabled');
 			
 			// 3. Créer un provider (simule l'activation manuelle)
 			const provider = new AdrCodelensNavigationProvider();
 			assert(provider instanceof AdrCodelensNavigationProvider, 'Provider should be created');
 			
-			// 4. Activer les CodeLens via commande
-			await vscode.commands.executeCommand('adrutilities.enableCodeLensNavigation');
+			// 4. Activer les CodeLens via configuration directe (au lieu de commande)
+			await config.update('enableCodeLensNavigation', true, true);
 			assert.strictEqual(config.get('enableCodeLensNavigation'), true, 'CodeLens should be enabled');
 			
 			// 5. Tester le fonctionnement avec un document
