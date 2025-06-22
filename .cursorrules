@@ -7,6 +7,10 @@
 - Toujours typer explicitement les paramètres et les valeurs de retour des fonctions, sauf pour les composants JSX.
 - Utilise les interfaces pour décrire les objets complexes.
 
+## Contexte
+
+- Prend toujours les fichiers *.md en entrée, ils documentent le projet et possèdent donc de précieuses informations sur le projet.
+  
 ## Structure de projet
 
 - Place le code source dans le dossier src/.

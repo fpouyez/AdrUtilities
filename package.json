@@ -75,8 +75,19 @@
 			],
 			"commandPalette": [
 				{
-					"command": "adrutilities.create",
-					"when": "sideBarFocus && activeViewlet == 'workbench.view.explorer'"
+					"command": "adrutilities.create"
+				},
+				{
+					"command": "adrutilities.list"
+				},
+				{
+					"command": "adrutilities.enableCodeLensNavigation"
+				},
+				{
+					"command": "adrutilities.disableCodeLensNavigation"
+				},
+				{
+					"command": "adrutilities.enableCodeLensOnStartup"
 				}
 			]
 		},

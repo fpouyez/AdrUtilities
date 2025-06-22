@@ -10,7 +10,49 @@ export function activate(context: vscode.ExtensionContext) {
     // Enregistrement des commandes avec gestion d'erreurs
     const listCommand = vscode.commands.registerCommand("adrutilities.list", async () => {
       try {
-        return await list();
+        const adrs = await list();
+        
+        if (adrs.length === 0) {
+          vscode.window.showInformationMessage('Aucun ADR trouvé dans le workspace');
+          return [];
+        }
+        
+        // Créer une liste détaillée des ADR avec chemin relatif
+        const adrItems = adrs.map(uri => {
+          const path = uri.fsPath;
+          const fileName = path.split(/[\\/]/).pop() || path;
+          const relativePath = vscode.workspace.asRelativePath(uri);
+          return {
+            label: fileName,
+            description: relativePath,
+            detail: path,
+            uri: uri
+          };
+        });
+        
+        // Afficher un message avec le nombre d'ADR trouvés
+        vscode.window.showInformationMessage(`${adrs.length} ADR(s) trouvé(s) dans le workspace`);
+        
+        // Afficher la liste complète des ADR avec plus d'informations
+        if (adrs.length === 1) {
+          // Si un seul ADR, l'ouvrir directement
+          const doc = await vscode.workspace.openTextDocument(adrs[0]);
+          await vscode.window.showTextDocument(doc);
+        } else if (adrs.length > 1) {
+          // Si plusieurs ADR, proposer une sélection avec plus d'informations
+          const selected = await vscode.window.showQuickPick(adrItems, {
+            placeHolder: 'Sélectionnez un ADR à ouvrir',
+            matchOnDescription: true,
+            matchOnDetail: true
+          });
+          
+          if (selected) {
+            const doc = await vscode.workspace.openTextDocument(selected.uri);
+            await vscode.window.showTextDocument(doc);
+          }
+        }
+        
+        return adrs;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue lors du listing des ADR';
         vscode.window.showErrorMessage(errorMessage);
