@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/fpouyez/AdrUtilities/compare/v1.1.2...v1.2.0) (2025-06-22)
+
+
+### Features
+
+* enable or disable codelens for performance considerations + list correction. ([3e3d0ed](https://github.com/fpouyez/AdrUtilities/commit/3e3d0ed2c39a41badb24e95271a6962514afde3b))
+
+
+### Performance Improvements
+
+* optimisations majeures de performance avec activation lazy et cache intelligent ([7aba9cc](https://github.com/fpouyez/AdrUtilities/commit/7aba9cc0c270eeb52c9fa15e0d2572a0722cddf5))
+
 ## [1.1.2](https://github.com/fpouyez/AdrUtilities/compare/v1.1.1...v1.1.2) (2025-06-21)
 
 
