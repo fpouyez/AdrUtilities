@@ -40,6 +40,10 @@ suite('Performance Optimizations Test Suite', () => {
 	test('Cache should avoid recalculation for same document', async () => {
 		const provider = new AdrCodelensNavigationProvider();
 		
+		// Vérifier la configuration actuelle
+		const config = vscode.workspace.getConfiguration('adrutilities');
+		const isCodeLensEnabled = config.get('enableCodeLensNavigation', true);
+		
 		// Mock d'un document avec des références ADR
 		const mockDocument = {
 			getText: () => '// adr_test_20241220.md\n// adr_another_20241220.md',
@@ -53,7 +57,12 @@ suite('Performance Optimizations Test Suite', () => {
 		// Premier appel - devrait calculer les CodeLens
 		const result1 = await provider.provideCodeLenses(mockDocument, {} as any);
 		assert(Array.isArray(result1));
-		assert(result1.length > 0);
+		
+		if (isCodeLensEnabled) {
+			assert(result1.length > 0, 'Should have CodeLens when enabled');
+		} else {
+			assert.strictEqual(result1.length, 0, 'Should have no CodeLens when disabled');
+		}
 
 		// Deuxième appel avec le même document - devrait utiliser le cache
 		const result2 = await provider.provideCodeLenses(mockDocument, {} as any);
@@ -126,6 +135,10 @@ suite('Performance Optimizations Test Suite', () => {
 	test('CodeLens should work on all file types', async () => {
 		const provider = new AdrCodelensNavigationProvider();
 		
+		// Vérifier la configuration actuelle
+		const config = vscode.workspace.getConfiguration('adrutilities');
+		const isCodeLensEnabled = config.get('enableCodeLensNavigation', true);
+		
 		// Test avec différents types de fichiers
 		const fileTypes = [
 			'file:///test.ts',
@@ -147,8 +160,12 @@ suite('Performance Optimizations Test Suite', () => {
 
 			const result = await provider.provideCodeLenses(mockDocument, {} as any);
 			assert(Array.isArray(result));
-			// Devrait trouver des CodeLens sur tous les types de fichiers
-			assert(result.length > 0, `CodeLens should work on ${fileUri}`);
+			
+			if (isCodeLensEnabled) {
+				assert(result.length > 0, `CodeLens should work on ${fileUri} when enabled`);
+			} else {
+				assert.strictEqual(result.length, 0, `CodeLens should have no results on ${fileUri} when disabled`);
+			}
 		}
 	});
 

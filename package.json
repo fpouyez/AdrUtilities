@@ -31,7 +31,7 @@
 		"onCommand:adrutilities.disableCodeLensNavigation",
 		"onCommand:adrutilities.enableCodeLensOnStartup"
 	],
-	"main": "./dist/main.js",
+	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -106,12 +106,12 @@
 				},
 				"adrutilities.enableCodeLensNavigation": {
 					"type": "boolean",
-					"default": "true",
+					"default": true,
 					"description": "Enable CodeLens navigation to ADRs."
 				},
 				"adrutilities.enableCodeLensOnStartup": {
 					"type": "boolean",
-					"default": "false",
+					"default": false,
 					"description": "Enable CodeLens navigation automatically on startup. Set to false for better performance."
 				},
 				"adrutilities.currentTemplate": {
@@ -130,10 +130,7 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run esbuild-base -- --minify",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
-		"esbuild": "npm run esbuild-base -- --sourcemap",
-		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
