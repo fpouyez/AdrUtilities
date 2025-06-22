@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/fpouyez/AdrUtilities/compare/v1.2.0...v1.2.1) (2025-06-22)
+
+
+### Bug Fixes
+
+* ignored files cleaning and publication ([ffb6522](https://github.com/fpouyez/AdrUtilities/commit/ffb652223145529bd1e2f33a03fbd82269320300))
+
 # [1.2.0](https://github.com/fpouyez/AdrUtilities/compare/v1.1.2...v1.2.0) (2025-06-22)
 
 
