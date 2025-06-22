@@ -32,6 +32,14 @@ export function activate(context: vscode.ExtensionContext) {
     const enableCodeLensCommand = vscode.commands.registerCommand("adrutilities.enableCodeLensNavigation", async () => {
       try {
         await vscode.workspace.getConfiguration("adrutilities").update("enableCodeLensNavigation", true, true);
+        
+        // Enregistrer le provider si pas déjà fait
+        if (!codeLensProvider) {
+          codeLensProvider = new AdrCodelensNavigationProvider();
+          // Les CodeLens doivent fonctionner sur tous les types de fichiers pour transformer les commentaires en liens
+          vscode.languages.registerCodeLensProvider("*", codeLensProvider);
+        }
+        
         vscode.window.showInformationMessage('Navigation CodeLens ADR activée');
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Erreur lors de l\'activation de la navigation CodeLens';
@@ -43,11 +51,25 @@ export function activate(context: vscode.ExtensionContext) {
     const disableCodeLensCommand = vscode.commands.registerCommand("adrutilities.disableCodeLensNavigation", async () => {
       try {
         await vscode.workspace.getConfiguration("adrutilities").update("enableCodeLensNavigation", false, true);
+        
+        // Note: Le provider ne peut pas être désenregistré dynamiquement dans VS Code
+        // Il sera désactivé via la configuration dans le provider
         vscode.window.showInformationMessage('Navigation CodeLens ADR désactivée');
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la désactivation de la navigation CodeLens';
         vscode.window.showErrorMessage(errorMessage);
         console.error('Erreur lors de la désactivation de la navigation CodeLens:', error);
+      }
+    });
+
+    const enableCodeLensOnStartupCommand = vscode.commands.registerCommand("adrutilities.enableCodeLensOnStartup", async () => {
+      try {
+        await vscode.workspace.getConfiguration("adrutilities").update("enableCodeLensOnStartup", true, true);
+        vscode.window.showInformationMessage('CodeLens ADR sera activé au prochain redémarrage de VS Code');
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Erreur lors de l\'activation des CodeLens au démarrage';
+        vscode.window.showErrorMessage(errorMessage);
+        console.error('Erreur lors de l\'activation des CodeLens au démarrage:', error);
       }
     });
 
@@ -70,8 +92,15 @@ export function activate(context: vscode.ExtensionContext) {
     // Enregistrement du provider CodeLens avec gestion d'erreurs
     let codeLensProvider: AdrCodelensNavigationProvider;
     try {
-      codeLensProvider = new AdrCodelensNavigationProvider();
-      vscode.languages.registerCodeLensProvider("*", codeLensProvider);
+      // Vérifier si les CodeLens doivent être activés au démarrage
+      const enableOnStartup = vscode.workspace.getConfiguration("adrutilities").get("enableCodeLensOnStartup", false);
+      const enableCodeLens = vscode.workspace.getConfiguration("adrutilities").get("enableCodeLensNavigation", true);
+      
+      if (enableOnStartup && enableCodeLens) {
+        codeLensProvider = new AdrCodelensNavigationProvider();
+        // Les CodeLens doivent fonctionner sur tous les types de fichiers pour transformer les commentaires en liens
+        vscode.languages.registerCodeLensProvider("*", codeLensProvider);
+      }
     } catch (error) {
       console.error('Erreur lors de l\'enregistrement du provider CodeLens:', error);
       vscode.window.showErrorMessage('Erreur lors de l\'initialisation de la navigation CodeLens');
@@ -83,6 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
       createCommand,
       enableCodeLensCommand,
       disableCodeLensCommand,
+      enableCodeLensOnStartupCommand,
       codelensNavigationCommand
     );
 

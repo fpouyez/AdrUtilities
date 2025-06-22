@@ -25,7 +25,11 @@
 		"url": "https://github.com/fpouyez/AdrUtilities/issues"
 	},
 	"activationEvents": [
-		"*"
+		"onCommand:adrutilities.create",
+		"onCommand:adrutilities.list",
+		"onCommand:adrutilities.enableCodeLensNavigation",
+		"onCommand:adrutilities.disableCodeLensNavigation",
+		"onCommand:adrutilities.enableCodeLensOnStartup"
 	],
 	"main": "./dist/main.js",
 	"contributes": {
@@ -52,6 +56,12 @@
 				"command": "adrutilities.disableCodeLensNavigation",
 				"title": "Disable CodeLens ADR navigation.",
 				"shortTitle": "ADR Navigation Disable",
+				"category": "ADR"
+			},
+			{
+				"command": "adrutilities.enableCodeLensOnStartup",
+				"title": "Enable CodeLens ADR navigation on startup.",
+				"shortTitle": "ADR Navigation Startup Enable",
 				"category": "ADR"
 			}
 		],
@@ -87,6 +97,11 @@
 					"type": "boolean",
 					"default": "true",
 					"description": "Enable CodeLens navigation to ADRs."
+				},
+				"adrutilities.enableCodeLensOnStartup": {
+					"type": "boolean",
+					"default": "false",
+					"description": "Enable CodeLens navigation automatically on startup. Set to false for better performance."
 				},
 				"adrutilities.currentTemplate": {
 					"type": "string",

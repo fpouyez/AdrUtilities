@@ -83,6 +83,12 @@ Enable CodeLens navigation to ADRs.
 
 Default : *true*.
 
+### enableCodeLensOnStartup
+
+Enable CodeLens navigation automatically on startup. Set to false for better performance.
+
+Default : *false*.
+
 ### currentTemplate
 
 Template used to fill the created ADR.
@@ -93,6 +99,22 @@ Possible values :
 - *'defaultTemplateEnglish'* : the same custom template, in English.
 
 Default : *defaultTemplateFrench*.
+
+## 🚀 Performance Optimizations
+
+This extension has been optimized for better performance:
+
+- **Lazy Activation**: The extension only activates when needed (commands executed)
+- **Smart Caching**: CodeLens results are cached to avoid recalculation
+- **Early Exit**: Quick checks prevent unnecessary processing of files without ADR references
+- **Configurable Startup**: CodeLens can be disabled at startup for better initial load time
+- **Cross-file Support**: CodeLens work on all file types to transform comments into ADR links
+
+To maximize performance:
+
+1. Set `enableCodeLensOnStartup` to `false` if you don't need CodeLens immediately
+2. Use the command `ADR Navigation Enable` when you need CodeLens functionality
+3. The extension will automatically optimize processing based on your usage patterns
 
 ## 🐛 Known Issues
 

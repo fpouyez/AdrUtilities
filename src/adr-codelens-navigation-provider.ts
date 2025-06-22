@@ -21,18 +21,47 @@ function adrRegexBuilder(): RegExp {
 export class AdrCodelensNavigationProvider implements CodeLensProvider {
 	private codeLenses: CodeLens[] = [];
 	private regex: RegExp;
+	private documentCache: Map<string, { codeLenses: CodeLens[], version: number }> = new Map();
 
 	// Commentaire de construction
 	constructor() {
 		this.regex = adrRegexBuilder();
+		this.setupCacheCleanup();
+	}
+
+	/**
+	 * Configure le nettoyage automatique du cache pour éviter les fuites mémoire
+	 */
+	private setupCacheCleanup(): void {
+		// Nettoyer le cache toutes les 5 minutes
+		setInterval(() => {
+			this.documentCache.clear();
+		}, 5 * 60 * 1000);
 	}
 
 	public provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
 		try {
 			if (this.isCodeLensNavigationActivated()) {
+				// Optimisation : vérification du cache
+				const documentKey = document.uri.toString();
+				const cached = this.documentCache.get(documentKey);
+				
+				if (cached && cached.version === document.version) {
+					return cached.codeLenses;
+				}
+				
+				// Optimisation : vérification rapide avant traitement complet
+				const text = document.getText();
+				const prefix = workspace.getConfiguration("adrutilities").get("adrFilePrefix") as string;
+				
+				// Vérification simple si le document contient des références ADR
+				if (!text.includes(prefix)) {
+					this.documentCache.set(documentKey, { codeLenses: [], version: document.version });
+					return [];
+				}
+				
 				this.codeLenses = [];
 				const regex = new RegExp(this.regex);
-				const text = document.getText();
 				let matches;
 				
 				// Protection contre les expressions régulières malveillantes
@@ -43,6 +72,9 @@ export class AdrCodelensNavigationProvider implements CodeLensProvider {
 					this.registerInCodelLensArray(document, matches);
 					matchCount++;
 				}
+				
+				// Mise en cache du résultat
+				this.documentCache.set(documentKey, { codeLenses: [...this.codeLenses], version: document.version });
 				
 				return this.codeLenses;
 			}

@@ -1,34 +1,82 @@
 # .cursorrules pour extension VS Code en TypeScript
 
-# Style général
+## Style général
+
 - Utilise la syntaxe TypeScript moderne (ES2020+).
 - Privilégie les fonctions fléchées pour les callbacks.
 - Toujours typer explicitement les paramètres et les valeurs de retour des fonctions, sauf pour les composants JSX.
 - Utilise les interfaces pour décrire les objets complexes.
 
-# Structure de projet
-- Place le code source dans le dossier src/.
-- Les fichiers d’entrée doivent être nommés extension.ts ou main.ts.
-- Utilise un dossier test/ pour les tests unitaires.
+## Structure de projet
 
-# Spécificités VS Code
-- Utilise l’API officielle vscode pour toutes les interactions avec l’éditeur.
+- Place le code source dans le dossier src/.
+- Les fichiers d'entrée doivent être nommés extension.ts ou main.ts.
+- Utilise un dossier test/ pour les tests unitaires.
+- Place la documentation dans doc/ avec les sous-dossiers appropriés (adrs/, build/, etc.).
+
+## Spécificités VS Code
+
+- Utilise l'API officielle vscode pour toutes les interactions avec l'éditeur.
 - Ajoute systématiquement des commentaires JSDoc sur les fonctions exportées et les classes publiques.
 - Pour les commandes, déclare-les dans package.json et documente-les dans le code.
-- Préfère l’utilisation de vscode.commands.registerCommand pour enregistrer les commandes.
+- Préfère l'utilisation de vscode.commands.registerCommand pour enregistrer les commandes.
+- Optimise les performances avec une activation lazy et des événements spécifiques.
 
-# Bonnes pratiques TypeScript
+## Bonnes pratiques TypeScript
+
 - Active strictNullChecks et noImplicitAny.
 - Utilise const et let, jamais var.
-- Préfère les imports explicites (import { X } from 'module').
+- Privilégie les imports explicites (import { X } from 'module').
 
-# Documentation & commentaires
+## Documentation & commentaires
+
 - Ajoute un commentaire JSDoc pour chaque fonction exportée, interface et classe publique.
 - Documente les paramètres, les valeurs de retour et les effets de bord.
+- Crée des ADR pour les décisions architecturales importantes dans doc/adrs/.
+- Documente les optimisations de performance et les choix de compatibilité.
 
-# Tests
+## Tests
+
 - Utilise Jest ou Mocha pour les tests unitaires.
 - Place les fichiers de test dans test/ et nomme-les *.test.ts.
+- Écris les tests en se basant sur le comportement attendu, pas sur l'implémentation.
+- Assure la compatibilité multiplateforme (Windows, MacOS, Linux) :
+  - Utilise des URI (`file:///...`) pour simuler les chemins de fichiers.
+  - Évite les séparateurs système (`/` ou `\`) dans les chemins de test.
+  - Mock les objets VS Code sans accès disque réel.
+- Teste les optimisations de performance (cache, activation lazy, etc.).
+- Vérifie la non-régression des fonctionnalités de base.
 
-# Exemples de code
-- Lorsque tu génères des exemples, commence toujours par l’import de vscode :
+## Performance & Optimisations
+
+- Implémente une activation lazy pour éviter le chargement au démarrage.
+- Utilise des événements d'activation spécifiques plutôt que "*".
+- Mette en cache les résultats coûteux (CodeLens, etc.).
+- Ajoute des vérifications préalables pour éviter les calculs inutiles.
+- Configure des options pour permettre à l'utilisateur de contrôler les performances.
+
+## Compatibilité multiplateforme
+
+- Garantis la compatibilité Windows, MacOS et Linux.
+- Utilise l'API VS Code pour la manipulation des chemins (URI).
+- Évite les dépendances aux séparateurs de chemin système.
+- Teste sur différentes plateformes si possible.
+- Documente les spécificités de compatibilité dans doc/build/.
+
+## Sécurité
+
+- Valide toutes les entrées utilisateur.
+- Échappe les caractères spéciaux dans les expressions régulières.
+- Limite les ressources pour éviter les attaques par déni de service.
+- Utilise des patterns sécurisés pour les noms de fichiers et chemins.
+
+## Exemples de code
+
+- Lorsque tu génères des exemples, commence toujours par l'import de vscode :
+
+```typescript
+import * as vscode from 'vscode';
+```
+
+- Inclus des exemples de tests compatibles multiplateforme.
+- Montre les bonnes pratiques de performance et de sécurité.
