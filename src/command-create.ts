@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as adrStrings from "./adr-string-const";
 import { convertSeparators, convertSeparatorsOnUri, separator, findLastDirectoryName } from "./adr-filepath";
 import { SecurityValidator } from "./security-validator";
+import * as fs from 'fs';
 
 const padZero = (num: number, pad: number) => num.toString().padStart(pad, "0");
 
@@ -84,7 +85,19 @@ const DEFAULT_TEMPLATE = adrStrings.defaultTemplateFrench;
  * @returns Le contenu du template sélectionné
  */
 const pickTemplate = (): string => {
-	const templateString = vscode.workspace.getConfiguration("adrutilities").get("currentTemplate") as string;
+	const config = vscode.workspace.getConfiguration("adrutilities");
+	const templateString = config.get("currentTemplate") as string;
+	const customTemplatePath = config.get("customTemplatePath") as string | undefined;
+
+	if (customTemplatePath && customTemplatePath.trim() !== '') {
+		try {
+			const content = fs.readFileSync(customTemplatePath, 'utf8');
+			return content;
+		} catch (e) {
+			vscode.window.showWarningMessage(`Unable to read custom template: ${customTemplatePath}. Falling back to default template.`);
+		}
+	}
+
 	if (!(templateString in templateMap)) {
 		vscode.window.showWarningMessage(`Le template "${templateString}" est inconnu. Utilisation du template français par défaut.`);
 	}

@@ -368,4 +368,58 @@ suite('Command-Create Test Suite', () => {
 			vscode.workspace.getConfiguration = originalGetConfiguration;
 		}
 	});
+
+	test('Should use custom template file if customTemplatePath is set', async () => {
+		const mockFileWriter = new MockFileWriter();
+		const customTemplateContent = 'CUSTOM TEMPLATE CONTENT';
+		let fileReadPath = '';
+
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Custom Template');
+		} as any;
+
+		// Mock de la configuration pour utiliser un chemin personnalisé
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function(section: string) {
+			return {
+				get: function(key: string, defaultValue?: any) {
+					if (key === 'currentTemplate') {
+						return 'defaultTemplateFrench'; // peu importe, custom doit primer
+					}
+					if (key === 'customTemplatePath') {
+						return '/tmp/custom-template.md';
+					}
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as any;
+		} as any;
+
+		// Mock de la lecture de fichier (fs)
+		const originalReadFile = require('fs').readFileSync;
+		require('fs').readFileSync = function(path: string) {
+			fileReadPath = path;
+			return customTemplateContent;
+		};
+
+		try {
+			const testUri = vscode.Uri.file('test/path/adr');
+			await createAdr(testUri, mockFileWriter);
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit avec le template personnalisé');
+			assert.strictEqual(fileReadPath, '/tmp/custom-template.md', 'Le chemin du template personnalisé doit être utilisé');
+			const content = mockFileWriter.writeFileContent!.toString();
+			assert.strictEqual(content, customTemplateContent, 'Le contenu du template personnalisé doit être utilisé');
+		} finally {
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+			require('fs').readFileSync = originalReadFile;
+		}
+	});
 }); 

@@ -106,6 +106,18 @@ Default : *defaultTemplateFrench*.
 
 **MADR templates** follow the [MADR 4.0.0 specification](https://adr.github.io/madr/), with YAML metadata and a standardized structure. The French version is a faithful translation of the English MADR template, allowing you to document your architectural decisions in your preferred language while remaining compatible with industry standards.
 
+### customTemplatePath
+
+If you want to use your own ADR template, you can provide a file path in the `customTemplatePath` setting. If this field is set and not empty, the content of the file will be used as the template for new ADRs, regardless of the value of `currentTemplate`.
+
+- **How to use:**
+  - Set the full path to your custom template file in the `customTemplatePath` setting (absolute or relative to your workspace).
+  - The file content will be used as-is for every new ADR you create.
+- **Fallback:**
+  - If the file cannot be read, a warning message will be displayed in English and the default French template will be used as a fallback.
+
+This allows you to fully customize the structure and content of your ADRs to fit your team's needs.
+
 ## 🚀 Performance Optimizations
 
 This extension has been optimized for better performance:
