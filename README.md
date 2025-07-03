@@ -59,6 +59,10 @@ Each mention of ADR in a text editor (which matches the naming pattern) enables 
 
 If the name doesn't match a real ADR, the CodeLens annotation marks it as not navigable.
 
+### Preview ADR Template
+
+Use the command palette (ADR Template Preview) to preview the content of the currently selected ADR template before creating a new ADR. This helps you understand the structure and content that will be used for your new ADR file.
+
 ## 📋 Requirements
 
 vscode : 1.92.0 or more

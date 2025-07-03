@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { createAdr } from "./command-create";
+import { registerPreviewTemplateCommand } from "./command-preview-template";
 import { list } from "./command-list";
 import { AdrCodelensNavigationProvider } from "./adr-codelens-navigation-provider";
 
@@ -157,6 +158,9 @@ export function activate(context: vscode.ExtensionContext) {
       enableCodeLensOnStartupCommand,
       codelensNavigationCommand
     );
+
+    // Enregistrement de la commande de prévisualisation du template ADR
+    registerPreviewTemplateCommand(context);
 
   } catch (error) {
     console.error('Erreur lors de l\'activation de l\'extension:', error);

@@ -422,4 +422,31 @@ suite('Command-Create Test Suite', () => {
 			require('fs').readFileSync = originalReadFile;
 		}
 	});
+
+	test('Should preview the current ADR template when preview command is called', async () => {
+		const mockTemplateContent = 'TEMPLATE PREVIEW CONTENT';
+		let shownContent = '';
+
+		// Mock pickTemplate dans template-selector pour retourner un contenu connu
+		const templateSelector = require('../../template-selector');
+		const originalPickTemplate = templateSelector.pickTemplate;
+		templateSelector.pickTemplate = () => mockTemplateContent;
+
+		// Mock showInformationMessage pour capturer le contenu affiché
+		const originalShowInformationMessage = vscode.window.showInformationMessage;
+		vscode.window.showInformationMessage = function(msg: string) {
+			shownContent = msg;
+			return Promise.resolve('OK');
+		} as any;
+
+		// Appel de la commande de prévisualisation
+		await vscode.commands.executeCommand('adrutilities.previewTemplate');
+
+		// Vérifie que le contenu du template est bien affiché
+		assert.strictEqual(shownContent, mockTemplateContent);
+
+		// Restore mocks
+		templateSelector.pickTemplate = originalPickTemplate;
+		vscode.window.showInformationMessage = originalShowInformationMessage;
+	});
 }); 

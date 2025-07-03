@@ -63,6 +63,12 @@
 				"title": "Enable CodeLens ADR navigation on startup.",
 				"shortTitle": "ADR Navigation Startup Enable",
 				"category": "ADR"
+			},
+			{
+				"command": "adrutilities.previewTemplate",
+				"title": "Preview ADR Template",
+				"shortTitle": "ADR Template Preview",
+				"category": "ADR"
 			}
 		],
 		"menus": {

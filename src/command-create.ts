@@ -3,6 +3,7 @@ import * as adrStrings from "./adr-string-const";
 import { convertSeparators, convertSeparatorsOnUri, separator, findLastDirectoryName } from "./adr-filepath";
 import { SecurityValidator } from "./security-validator";
 import * as fs from 'fs';
+import { pickTemplate } from './template-selector';
 
 const padZero = (num: number, pad: number) => num.toString().padStart(pad, "0");
 
@@ -80,30 +81,6 @@ const templateMap: Record<string, string> = {
  */
 const DEFAULT_TEMPLATE = adrStrings.defaultTemplateFrench;
 
-/**
- * Sélectionne le template approprié selon la configuration
- * @returns Le contenu du template sélectionné
- */
-const pickTemplate = (): string => {
-	const config = vscode.workspace.getConfiguration("adrutilities");
-	const templateString = config.get("currentTemplate") as string;
-	const customTemplatePath = config.get("customTemplatePath") as string | undefined;
-
-	if (customTemplatePath && customTemplatePath.trim() !== '') {
-		try {
-			const content = fs.readFileSync(customTemplatePath, 'utf8');
-			return content;
-		} catch (e) {
-			vscode.window.showWarningMessage(`Unable to read custom template: ${customTemplatePath}. Falling back to default template.`);
-		}
-	}
-
-	if (!(templateString in templateMap)) {
-		vscode.window.showWarningMessage(`Le template "${templateString}" est inconnu. Utilisation du template français par défaut.`);
-	}
-	return templateMap[templateString] || DEFAULT_TEMPLATE;
-};
-
 export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VSCodeFileWriter()): Promise<void> {
 	try {
 		console.log("Create initial dir : "+uri);
@@ -170,4 +147,3 @@ export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VS
 		console.error('Erreur lors de la création de l\'ADR:', error);
 	}
 }
-
