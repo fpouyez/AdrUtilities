@@ -317,4 +317,55 @@ suite('Command-Create Test Suite', () => {
 		// Restaure la fonction originale
 		vscode.window.showInputBox = originalShowInputBox;
 	});
+
+	test('Should warn user if template is unknown and fallback to default', async () => {
+		const mockFileWriter = new MockFileWriter();
+		let warningMessage = '';
+
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Unknown Template');
+		} as any;
+
+		// Mock de showWarningMessage pour capturer le message
+		const originalShowWarningMessage = vscode.window.showWarningMessage;
+		vscode.window.showWarningMessage = function(msg: string) {
+			warningMessage = msg;
+			return Promise.resolve('OK');
+		} as any;
+
+		// Mock de la configuration pour utiliser un template inconnu
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function(section: string) {
+			return {
+				get: function(key: string, defaultValue?: any) {
+					if (key === 'currentTemplate') {
+						return 'unknownTemplate';
+					}
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as any;
+		} as any;
+
+		try {
+			const testUri = vscode.Uri.file('test/path/adr');
+			await createAdr(testUri, mockFileWriter);
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit même avec un template inconnu');
+			assert(mockFileWriter.writeFileContent, 'Le contenu devrait être écrit');
+			assert(warningMessage.includes('inconnu'), 'Un message d\'avertissement doit être affiché si le template est inconnu');
+			const content = mockFileWriter.writeFileContent!.toString();
+			assert(content.includes('* **Statut**'), 'Le fallback doit utiliser le template français par défaut');
+		} finally {
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.window.showWarningMessage = originalShowWarningMessage;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
 }); 

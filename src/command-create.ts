@@ -85,6 +85,9 @@ const DEFAULT_TEMPLATE = adrStrings.defaultTemplateFrench;
  */
 const pickTemplate = (): string => {
 	const templateString = vscode.workspace.getConfiguration("adrutilities").get("currentTemplate") as string;
+	if (!(templateString in templateMap)) {
+		vscode.window.showWarningMessage(`Le template "${templateString}" est inconnu. Utilisation du template français par défaut.`);
+	}
 	return templateMap[templateString] || DEFAULT_TEMPLATE;
 };
 
