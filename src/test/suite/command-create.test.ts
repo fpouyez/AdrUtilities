@@ -425,28 +425,56 @@ suite('Command-Create Test Suite', () => {
 
 	test('Should preview the current ADR template when preview command is called', async () => {
 		const mockTemplateContent = 'TEMPLATE PREVIEW CONTENT';
-		let shownContent = '';
+		let openedDocument: any = null;
+		let shownDocument: any = null;
 
 		// Mock pickTemplate dans template-selector pour retourner un contenu connu
 		const templateSelector = require('../../template-selector');
 		const originalPickTemplate = templateSelector.pickTemplate;
 		templateSelector.pickTemplate = () => mockTemplateContent;
 
-		// Mock showInformationMessage pour capturer le contenu affiché
+		// Mock openTextDocument pour capturer le document créé
+		const originalOpenTextDocument = vscode.workspace.openTextDocument;
+		vscode.workspace.openTextDocument = function(options: any) {
+			openedDocument = options;
+			return Promise.resolve({
+				content: options.content,
+				language: options.language
+			} as any);
+		} as any;
+
+		// Mock showTextDocument pour capturer le document affiché
+		const originalShowTextDocument = vscode.window.showTextDocument;
+		vscode.window.showTextDocument = function(document: any, options?: any) {
+			shownDocument = { document, options };
+			return Promise.resolve({} as any);
+		} as any;
+
+		// Mock showInformationMessage pour capturer le message de confirmation
+		let confirmationMessage = '';
 		const originalShowInformationMessage = vscode.window.showInformationMessage;
 		vscode.window.showInformationMessage = function(msg: string) {
-			shownContent = msg;
+			confirmationMessage = msg;
 			return Promise.resolve('OK');
 		} as any;
 
 		// Appel de la commande de prévisualisation
 		await vscode.commands.executeCommand('adrutilities.previewTemplate');
 
-		// Vérifie que le contenu du template est bien affiché
-		assert.strictEqual(shownContent, mockTemplateContent);
+		// Vérifie que le document a été créé avec le bon contenu
+		assert.strictEqual(openedDocument.content, mockTemplateContent);
+		assert.strictEqual(openedDocument.language, 'markdown');
+
+		// Vérifie que le document a été affiché
+		assert.notStrictEqual(shownDocument, null);
+
+		// Vérifie que le message de confirmation est affiché
+		assert.strictEqual(confirmationMessage, 'Template ADR affiché dans l\'éditeur');
 
 		// Restore mocks
 		templateSelector.pickTemplate = originalPickTemplate;
+		vscode.workspace.openTextDocument = originalOpenTextDocument;
+		vscode.window.showTextDocument = originalShowTextDocument;
 		vscode.window.showInformationMessage = originalShowInformationMessage;
 	});
 }); 
