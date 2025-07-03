@@ -69,8 +69,18 @@ const pickTemplate = () => {
 	if (templateString === 'defaultTemplateFrench') {
 		template = adrStrings.defaultTemplateFrench;
 	}
-	else {
+	else if (templateString === 'defaultTemplateEnglish') {
 		template = adrStrings.defaultTemplateEnglish;
+	}
+	else if (templateString === 'madrTemplateEnglish') {
+		template = adrStrings.madrTemplateEnglish;
+	}
+	else if (templateString === 'madrTemplateFrench') {
+		template = adrStrings.madrTemplateFrench;
+	}
+	else {
+		// Fallback vers le template français par défaut
+		template = adrStrings.defaultTemplateFrench;
 	}
 	return template;
 };

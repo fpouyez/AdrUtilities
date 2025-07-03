@@ -97,8 +97,12 @@ Possible values :
 
 - *'defaultTemplateFrench'* : a custom template created to fill our needs, in French.
 - *'defaultTemplateEnglish'* : the same custom template, in English.
+- *'madrTemplateEnglish'* : standard MADR (Markdown Architecture Decision Records) template with YAML frontmatter, in English.
+- *'madrTemplateFrench'* : standard MADR (Markdown Architecture Decision Records) template with YAML frontmatter, in French.
 
 Default : *defaultTemplateFrench*.
+
+**MADR templates** follow the [MADR 4.0.0 specification](https://adr.github.io/madr/), with YAML metadata and a standardized structure. The French version is a faithful translation of the English MADR template, allowing you to document your architectural decisions in your preferred language while remaining compatible with industry standards.
 
 ## 🚀 Performance Optimizations
 

@@ -146,4 +146,103 @@ suite('Command-Create Test Suite', () => {
 		assert.strictEqual(mockFileWriter.writeFileUri, testUri);
 		assert.strictEqual(mockFileWriter.writeFileContent, testContent);
 	});
+
+	test('MADR template should be selected correctly', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test MADR ADR');
+		} as any;
+
+		// Mock de la configuration pour utiliser le template MADR
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function(section: string) {
+			return {
+				get: function(key: string, defaultValue?: any) {
+					if (key === 'currentTemplate') {
+						return 'madrTemplate';
+					}
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as any;
+		} as any;
+
+		try {
+			const testUri = vscode.Uri.file('test/path/adr');
+			await createAdr(testUri, mockFileWriter);
+			
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit');
+			assert(mockFileWriter.writeFileContent, 'Le contenu devrait être écrit');
+			
+			// Vérifier que le contenu contient les éléments spécifiques au template MADR
+			const content = mockFileWriter.writeFileContent!.toString();
+			assert(content.includes('---'), 'Le template MADR devrait contenir des métadonnées YAML');
+			assert(content.includes('title:'), 'Le template MADR devrait contenir le champ title');
+			assert(content.includes('status:'), 'Le template MADR devrait contenir le champ status');
+			assert(content.includes('decision-makers:'), 'Le template MADR devrait contenir le champ decision-makers');
+			assert(content.includes('## Context and Problem Statement'), 'Le template MADR devrait contenir la section Context and Problem Statement');
+			assert(content.includes('## Decision Drivers'), 'Le template MADR devrait contenir la section Decision Drivers');
+			assert(content.includes('## Considered Options'), 'Le template MADR devrait contenir la section Considered Options');
+			assert(content.includes('## Decision Outcome'), 'Le template MADR devrait contenir la section Decision Outcome');
+			assert(content.includes('## Pros and Cons of the Options'), 'Le template MADR devrait contenir la section Pros and Cons of the Options');
+		} finally {
+			// Restaure les fonctions originales
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
+
+	test('Template selection should handle unknown template gracefully', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Unknown Template');
+		} as any;
+
+		// Mock de la configuration pour utiliser un template inconnu
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function(section: string) {
+			return {
+				get: function(key: string, defaultValue?: any) {
+					if (key === 'currentTemplate') {
+						return 'unknownTemplate';
+					}
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as any;
+		} as any;
+
+		try {
+			const testUri = vscode.Uri.file('test/path/adr');
+			await createAdr(testUri, mockFileWriter);
+			
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit même avec un template inconnu');
+			assert(mockFileWriter.writeFileContent, 'Le contenu devrait être écrit');
+			
+			// Vérifier que le contenu contient les éléments du template français par défaut (fallback)
+			const content = mockFileWriter.writeFileContent!.toString();
+			assert(content.includes('* **Statut**'), 'Le fallback devrait utiliser le template français');
+			assert(content.includes('## Contexte et Problématique'), 'Le fallback devrait contenir la section Contexte');
+		} finally {
+			// Restaure les fonctions originales
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
 }); 
