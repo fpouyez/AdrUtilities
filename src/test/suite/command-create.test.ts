@@ -162,7 +162,7 @@ suite('Command-Create Test Suite', () => {
 			return {
 				get: function(key: string, defaultValue?: any) {
 					if (key === 'currentTemplate') {
-						return 'madrTemplate';
+						return 'madrTemplateEnglish';
 					}
 					if (key === 'adrFilePrefix') {
 						return 'adr_';
