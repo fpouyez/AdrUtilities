@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/fpouyez/AdrUtilities/compare/v1.2.1...v1.3.0) (2025-07-03)
+
+
+### Features
+
+* ajout du template MADR en anglais et en français, mise à jour de la doc et exemples ([2721333](https://github.com/fpouyez/AdrUtilities/commit/2721333b1c78ce25f73e08d3f48eb3e49224f103))
+* message d'avertissement et fallback automatique lors de la sélection d'un template ADR inconnu ([edde67b](https://github.com/fpouyez/AdrUtilities/commit/edde67bb2cb3e5b6a8cafebb152cfb1838d3d785))
+* support du template ADR personnalisé via la configuration customTemplatePath ([6bfa584](https://github.com/fpouyez/AdrUtilities/commit/6bfa584f7d947f49e2fdb9bdda36a7a02998b991))
+
 ## [1.2.1](https://github.com/fpouyez/AdrUtilities/compare/v1.2.0...v1.2.1) (2025-06-22)
 
 
