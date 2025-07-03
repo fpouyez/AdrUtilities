@@ -1,3 +1,15 @@
+# [1.4.0](https://github.com/fpouyez/AdrUtilities/compare/v1.3.0...v1.4.0) (2025-07-03)
+
+
+### Bug Fixes
+
+* preview in a temporary window ([d907c23](https://github.com/fpouyez/AdrUtilities/commit/d907c23066f1889488fa7f23b3c9bc22f7860b98))
+
+
+### Features
+
+* add a template previewing ([b261fb4](https://github.com/fpouyez/AdrUtilities/commit/b261fb44d657c4122565f2f16b7e9fd4cbcad4c3))
+
 # [1.3.0](https://github.com/fpouyez/AdrUtilities/compare/v1.2.1...v1.3.0) (2025-07-03)
 
 
