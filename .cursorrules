@@ -84,3 +84,14 @@ import * as vscode from 'vscode';
 
 - Inclus des exemples de tests compatibles multiplateforme.
 - Montre les bonnes pratiques de performance et de sécurité.
+
+## Pratique TDD (Test-Driven Development)
+
+- Toute évolution de la logique métier ou des utilitaires doit commencer par l'écriture d'un test qui définit le comportement attendu (TDD).
+- Le cycle TDD (Red/Green/Refactor) doit être respecté :
+  - Écrire un test qui échoue (Red)
+  - Implémenter la fonctionnalité pour faire passer le test (Green)
+  - Refactoriser le code en s'assurant que tous les tests passent (Refactor)
+- Les tests doivent couvrir les cas nominaux, les cas limites et les régressions potentielles.
+- Les tests TDD sont à conserver dans le projet et servent de documentation vivante du comportement attendu.
+- Toute refactorisation majeure doit être précédée ou accompagnée de tests pour garantir la non-régression.

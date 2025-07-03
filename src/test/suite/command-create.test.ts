@@ -245,4 +245,76 @@ suite('Command-Create Test Suite', () => {
 			vscode.workspace.getConfiguration = originalGetConfiguration;
 		}
 	});
+
+	test('Template selection should use centralized mapping for all templates', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Template Mapping');
+		} as any;
+
+		// Test tous les templates disponibles
+		const templates = [
+			'defaultTemplateFrench',
+			'defaultTemplateEnglish', 
+			'madrTemplateEnglish',
+			'madrTemplateFrench'
+		];
+
+		for (const templateName of templates) {
+			// Mock de la configuration pour utiliser le template en cours de test
+			const originalGetConfiguration = vscode.workspace.getConfiguration;
+			vscode.workspace.getConfiguration = function(section: string) {
+				return {
+					get: function(key: string, defaultValue?: any) {
+						if (key === 'currentTemplate') {
+							return templateName;
+						}
+						if (key === 'adrFilePrefix') {
+							return 'adr_';
+						}
+						if (key === 'adrDirectoryName') {
+							return 'adr';
+						}
+						return defaultValue;
+					}
+				} as any;
+			} as any;
+
+			try {
+				const testUri = vscode.Uri.file('test/path/adr');
+				await createAdr(testUri, mockFileWriter);
+				
+				assert(mockFileWriter.writeFileCalled, `Le fichier devrait être écrit avec le template ${templateName}`);
+				assert(mockFileWriter.writeFileContent, `Le contenu devrait être écrit avec le template ${templateName}`);
+				
+				// Vérifier que le bon template a été sélectionné selon le type
+				const content = mockFileWriter.writeFileContent!.toString();
+				
+				if (templateName.includes('madr')) {
+					// Templates MADR
+					assert(content.includes('---'), `Le template ${templateName} devrait contenir des métadonnées YAML`);
+					assert(content.includes('title:'), `Le template ${templateName} devrait contenir le champ title`);
+					assert(content.includes('status:'), `Le template ${templateName} devrait contenir le champ status`);
+				} else {
+					// Templates par défaut
+					assert(content.includes('* **'), `Le template ${templateName} devrait contenir des métadonnées en format liste`);
+					assert(content.includes('## '), `Le template ${templateName} devrait contenir des sections`);
+				}
+				
+				// Reset pour le prochain test
+				mockFileWriter.writeFileCalled = false;
+				mockFileWriter.writeFileContent = null;
+				
+			} finally {
+				// Restaure la fonction originale
+				vscode.workspace.getConfiguration = originalGetConfiguration;
+			}
+		}
+		
+		// Restaure la fonction originale
+		vscode.window.showInputBox = originalShowInputBox;
+	});
 }); 

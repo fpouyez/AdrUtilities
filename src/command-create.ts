@@ -63,26 +63,29 @@ const askForTitle = async () => {
 	return title ? SecurityValidator.sanitizeAdrTitle(title) : null;
 };
 
-const pickTemplate = () => {
+/**
+ * Mapping centralisé des templates disponibles
+ * Permet d'ajouter facilement de nouveaux templates sans modifier la logique de sélection
+ */
+const templateMap: Record<string, string> = {
+	defaultTemplateFrench: adrStrings.defaultTemplateFrench,
+	defaultTemplateEnglish: adrStrings.defaultTemplateEnglish,
+	madrTemplateEnglish: adrStrings.madrTemplateEnglish,
+	madrTemplateFrench: adrStrings.madrTemplateFrench,
+};
+
+/**
+ * Template par défaut utilisé en cas de template inconnu
+ */
+const DEFAULT_TEMPLATE = adrStrings.defaultTemplateFrench;
+
+/**
+ * Sélectionne le template approprié selon la configuration
+ * @returns Le contenu du template sélectionné
+ */
+const pickTemplate = (): string => {
 	const templateString = vscode.workspace.getConfiguration("adrutilities").get("currentTemplate") as string;
-	let template: string;
-	if (templateString === 'defaultTemplateFrench') {
-		template = adrStrings.defaultTemplateFrench;
-	}
-	else if (templateString === 'defaultTemplateEnglish') {
-		template = adrStrings.defaultTemplateEnglish;
-	}
-	else if (templateString === 'madrTemplateEnglish') {
-		template = adrStrings.madrTemplateEnglish;
-	}
-	else if (templateString === 'madrTemplateFrench') {
-		template = adrStrings.madrTemplateFrench;
-	}
-	else {
-		// Fallback vers le template français par défaut
-		template = adrStrings.defaultTemplateFrench;
-	}
-	return template;
+	return templateMap[templateString] || DEFAULT_TEMPLATE;
 };
 
 export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VSCodeFileWriter()): Promise<void> {
