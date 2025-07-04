@@ -59,15 +59,48 @@ jobs:
       - name: Fetch all tags
         run: git fetch --tags --force
 
-      - name: Verify we are on the correct tag
+      - name: Wait for tag to be available
         run: |
-          echo "Current tag: $(git describe --tags --exact-match HEAD)"
-          echo "Expected tag: v${{ needs.release.outputs.new_tag_version }}"
-          if [ "$(git describe --tags --exact-match HEAD)" != "v${{ needs.release.outputs.new_tag_version }}" ]; then
-            echo "ERROR: We are not on the expected tag!"
+          echo "Waiting for tag v${{ needs.release.outputs.new_tag_version }} to be available..."
+          for i in {1..10}; do
+            if git rev-parse "v${{ needs.release.outputs.new_tag_version }}" >/dev/null 2>&1; then
+              echo "✅ Tag v${{ needs.release.outputs.new_tag_version }} is available"
+              break
+            fi
+            echo "Attempt $i: Tag not found, waiting 3 seconds..."
+            sleep 3
+          done
+          
+          # Final check
+          if ! git rev-parse "v${{ needs.release.outputs.new_tag_version }}" >/dev/null 2>&1; then
+            echo "ERROR: Tag v${{ needs.release.outputs.new_tag_version }} not found after waiting"
+            echo "Available tags:"
+            git tag --list | tail -5
             exit 1
           fi
-          echo "✅ Tag verification successful"
+
+      - name: Verify we are on the correct tag
+        run: |
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Expected tag: v${{ needs.release.outputs.new_tag_version }}"
+          
+          # Try to get the current tag
+          CURRENT_TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "NO_TAG")
+          echo "Current tag: $CURRENT_TAG"
+          
+          # If we're not on the expected tag, try to checkout it explicitly
+          if [ "$CURRENT_TAG" != "v${{ needs.release.outputs.new_tag_version }}" ]; then
+            echo "⚠️  Not on expected tag, trying to checkout explicitly..."
+            git checkout "v${{ needs.release.outputs.new_tag_version }}" || {
+              echo "ERROR: Cannot checkout tag v${{ needs.release.outputs.new_tag_version }}"
+              echo "Available tags:"
+              git tag --list | tail -5
+              exit 1
+            }
+            echo "✅ Successfully checked out tag v${{ needs.release.outputs.new_tag_version }}"
+          else
+            echo "✅ Already on correct tag"
+          fi
 
       - name: Force clean checkout if needed
         run: |
