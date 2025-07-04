@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/fpouyez/AdrUtilities/compare/v1.4.0...v1.4.1) (2025-07-04)
+
+
+### Bug Fixes
+
+* patch de la pipeline ([574eae8](https://github.com/fpouyez/AdrUtilities/commit/574eae8c94571bc4781488d47e0477e23bb936af))
+
 # [1.4.0](https://github.com/fpouyez/AdrUtilities/compare/v1.3.0...v1.4.0) (2025-07-03)
 
 
