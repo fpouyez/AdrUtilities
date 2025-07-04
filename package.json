@@ -4,7 +4,7 @@
 	"description": "Some tools for manage ADR in your projects",
 	"icon": "images/vsicon.png",
 	"publisher": "FredericPouyez",
-	"version": "1.4.3",
+	"version": "1.4.4",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.92.0"
@@ -58,7 +58,6 @@
 				"shortTitle": "ADR Navigation Disable",
 				"category": "ADR"
 			},
-
 			{
 				"command": "adrutilities.previewTemplate",
 				"title": "Preview ADR Template",
@@ -102,11 +101,11 @@
 					"default": "adr_",
 					"description": "Prefix use in ADR filename, to differenciate ADR files from other MD files."
 				},
-						"adrutilities.enableCodeLensNavigation": {
-			"type": "boolean",
-			"default": true,
-			"description": "Enable CodeLens navigation to ADRs. When set to true, CodeLens will be active immediately and will show clickable links above ADR references in your code."
-		},
+				"adrutilities.enableCodeLensNavigation": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable CodeLens navigation to ADRs. When set to true, CodeLens will be active immediately and will show clickable links above ADR references in your code."
+				},
 				"adrutilities.currentTemplate": {
 					"type": "string",
 					"default": "defaultTemplateFrench",

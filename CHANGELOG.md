@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/fpouyez/AdrUtilities/compare/v1.4.3...v1.4.4) (2025-07-04)
+
+
+### Bug Fixes
+
+* enable codelens after init and simplify configuration ([1ccfb90](https://github.com/fpouyez/AdrUtilities/commit/1ccfb9053c8b03b5d08f0366ec3b2dc905b21d38))
+
 ## [1.4.3](https://github.com/fpouyez/AdrUtilities/compare/v1.4.2...v1.4.3) (2025-07-04)
 
 
