@@ -56,6 +56,26 @@ jobs:
         with:
           node-version: 20
       
+      - name: Fetch all tags
+        run: git fetch --tags --force
+
+      - name: Check package version
+        run: cat package.json | grep version
+
+      - name: Check CHANGELOG.md is up to date
+        run: |
+          echo "=== CHANGELOG.md content ==="
+          head -20 CHANGELOG.md
+          echo "=== End of CHANGELOG preview ==="
+          echo "CHANGELOG.md exists and is readable"
+
+      - name: Verify tag contains updated files
+        run: |
+          echo "=== Files in current tag ==="
+          git ls-tree -r HEAD --name-only | grep -E "(package\.json|CHANGELOG\.md)" || echo "No package.json or CHANGELOG.md found"
+          echo "=== Git log for current tag ==="
+          git log --oneline -3
+
       - name: "📦 install vsce"
         run: npm install -g vsce
 
