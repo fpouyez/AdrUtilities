@@ -59,6 +59,22 @@ jobs:
       - name: Fetch all tags
         run: git fetch --tags --force
 
+      - name: Verify we are on the correct tag
+        run: |
+          echo "Current tag: $(git describe --tags --exact-match HEAD)"
+          echo "Expected tag: v${{ needs.release.outputs.new_tag_version }}"
+          if [ "$(git describe --tags --exact-match HEAD)" != "v${{ needs.release.outputs.new_tag_version }}" ]; then
+            echo "ERROR: We are not on the expected tag!"
+            exit 1
+          fi
+          echo "✅ Tag verification successful"
+
+      - name: Force clean checkout if needed
+        run: |
+          git reset --hard HEAD
+          git clean -fd
+          echo "✅ Clean checkout completed"
+
       - name: Check package version
         run: cat package.json | grep version
 
