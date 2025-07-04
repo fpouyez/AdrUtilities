@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/fpouyez/AdrUtilities/compare/v1.4.1...v1.4.2) (2025-07-04)
+
+
+### Bug Fixes
+
+* Essai pour supprimer le décalage de version dans le publish... ([1feceb1](https://github.com/fpouyez/AdrUtilities/commit/1feceb18091e44b260f99ee75781dd9d4c920ae6))
+
 ## [1.4.1](https://github.com/fpouyez/AdrUtilities/compare/v1.4.0...v1.4.1) (2025-07-04)
 
 
