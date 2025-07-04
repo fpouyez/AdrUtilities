@@ -14,7 +14,7 @@ suite('Integration Performance Test Suite', () => {
 				return {
 					get: (key: string, defaultValue?: any) => {
 						if (key === 'enableCodeLensNavigation') {return true;}
-						if (key === 'enableCodeLensOnStartup') {return false;}
+				
 						if (key === 'adrDirectoryName') {return 'adr';}
 						if (key === 'adrFilePrefix') {return 'adr_';}
 						if (key === 'currentTemplate') {return 'defaultTemplateFrench';}

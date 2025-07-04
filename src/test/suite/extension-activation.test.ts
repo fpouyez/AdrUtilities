@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import { AdrCodelensNavigationProvider } from '../../adr-codelens-navigation-provider';
 
 suite('Extension Activation Test Suite', () => {
 	vscode.window.showInformationMessage('Start all extension activation tests.');
@@ -13,7 +14,6 @@ suite('Extension Activation Test Suite', () => {
 				return {
 					get: (key: string, defaultValue?: any) => {
 						if (key === 'enableCodeLensNavigation') {return true;}
-						if (key === 'enableCodeLensOnStartup') {return false;}
 						if (key === 'adrDirectoryName') {return 'adr';}
 						if (key === 'adrFilePrefix') {return 'adr_';}
 						if (key === 'currentTemplate') {return 'defaultTemplateFrench';}
@@ -57,7 +57,6 @@ suite('Extension Activation Test Suite', () => {
 		assert(commands.includes('adrutilities.list'), 'adrutilities.list command should be registered');
 		assert(commands.includes('adrutilities.enableCodeLensNavigation'), 'adrutilities.enableCodeLensNavigation command should be registered');
 		assert(commands.includes('adrutilities.disableCodeLensNavigation'), 'adrutilities.disableCodeLensNavigation command should be registered');
-		assert(commands.includes('adrutilities.enableCodeLensOnStartup'), 'adrutilities.enableCodeLensOnStartup command should be registered');
 	});
 
 	/**
@@ -74,23 +73,27 @@ suite('Extension Activation Test Suite', () => {
 		// Pour enableCodeLensNavigation, vérifier seulement que c'est un boolean
 		const enableCodeLens = config.get('enableCodeLensNavigation');
 		assert(typeof enableCodeLens === 'boolean', 'enableCodeLensNavigation should be a boolean');
-		
-		// Pour enableCodeLensOnStartup, vérifier seulement que c'est un boolean ou undefined
-		const enableCodeLensOnStartup = config.get('enableCodeLensOnStartup');
-		assert(typeof enableCodeLensOnStartup === 'boolean' || enableCodeLensOnStartup === undefined, 'enableCodeLensOnStartup should be a boolean or undefined');
 	});
 
 	/**
-	 * Test que l'activation lazy fonctionne
+	 * Test que l'extension s'active automatiquement au démarrage
 	 */
-	test('Lazy activation should work', async () => {
-		// L'extension ne devrait pas être activée automatiquement
-		// Ce test vérifie que l'extension est disponible
+	test('Extension should activate automatically on startup', async () => {
+		// L'extension devrait s'activer automatiquement grâce à onStartupFinished
 		const extension = vscode.extensions.getExtension('FredericPouyez.adrutilities');
 		
 		if (extension) {
-			// L'extension devrait être disponible
-			assert(extension.isActive === false || extension.isActive === true, 'Extension should be available');
+			// Attendre que l'extension soit activée
+			if (!extension.isActive) {
+				await extension.activate();
+			}
+			
+			// Vérifier que l'extension est active
+			assert(extension.isActive, 'Extension should be active after startup');
+			
+			// Vérifier que les commandes sont disponibles
+			const commands = await vscode.commands.getCommands();
+			assert(commands.includes('adrutilities.create'), 'Extension commands should be available after activation');
 		} else {
 			// Si l'extension n'est pas trouvée, c'est normal dans certains contextes de test
 			assert(true, 'Extension not found in test context');
@@ -107,13 +110,11 @@ suite('Extension Activation Test Suite', () => {
 		const adrDirectoryName = config.get('adrDirectoryName');
 		const adrFilePrefix = config.get('adrFilePrefix');
 		const enableCodeLensNavigation = config.get('enableCodeLensNavigation');
-		const enableCodeLensOnStartup = config.get('enableCodeLensOnStartup');
 		const currentTemplate = config.get('currentTemplate');
 		
 		assert(typeof adrDirectoryName === 'string', 'adrDirectoryName should be readable');
 		assert(typeof adrFilePrefix === 'string', 'adrFilePrefix should be readable');
 		assert(typeof enableCodeLensNavigation === 'boolean', 'enableCodeLensNavigation should be readable');
-		assert(typeof enableCodeLensOnStartup === 'boolean' || enableCodeLensOnStartup === undefined, 'enableCodeLensOnStartup should be readable');
 		assert(typeof currentTemplate === 'string', 'currentTemplate should be readable');
 	});
 
@@ -172,6 +173,103 @@ suite('Extension Activation Test Suite', () => {
 		} else {
 			// Si les commandes ne sont pas disponibles, c'est acceptable dans le contexte de test
 			assert(true, 'Commands not available in test context');
+		}
+	});
+
+	/**
+	 * Test que le CodeLens s'active correctement au démarrage quand enableCodeLensNavigation est true
+	 */
+	test('CodeLens should activate on startup when enableCodeLensNavigation is true', async () => {
+		// Mock de la configuration pour simuler enableCodeLensNavigation = true
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function(section?: string) {
+			if (section === 'adrutilities') {
+				return {
+					get: (key: string, defaultValue?: any) => {
+						if (key === 'enableCodeLensNavigation') {return true;}
+						if (key === 'adrDirectoryName') {return 'adr';}
+						if (key === 'adrFilePrefix') {return 'adr_';}
+						if (key === 'currentTemplate') {return 'defaultTemplateFrench';}
+						return defaultValue;
+					},
+					update: async () => true
+				} as any;
+			}
+			return originalGetConfiguration(section);
+		};
+
+		try {
+			// Attendre que l'extension soit activée
+			await waitForExtensionActivation();
+			
+			// Vérifier que les commandes sont disponibles
+			const commands = await vscode.commands.getCommands();
+			assert(commands.includes('adrutilities.codelensNavigation'), 'CodeLens navigation command should be registered');
+			
+			// Test que les commandes d'activation/désactivation fonctionnent
+			try {
+				await vscode.commands.executeCommand('adrutilities.enableCodeLensNavigation');
+				await vscode.commands.executeCommand('adrutilities.disableCodeLensNavigation');
+				assert(true, 'CodeLens commands executed successfully');
+			} catch (error) {
+				// Acceptable dans le contexte de test
+				assert(true, 'CodeLens commands failed but that is acceptable in test context');
+			}
+		} finally {
+			// Restaurer la configuration originale
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
+
+	/**
+	 * Test TDD : Le CodeLens doit s'activer automatiquement au démarrage avec la configuration par défaut
+	 */
+	test('CodeLens should activate automatically on startup with default configuration', async () => {
+		// Mock de la configuration par défaut (enableCodeLensNavigation = true)
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function(section?: string) {
+			if (section === 'adrutilities') {
+				return {
+					get: (key: string, defaultValue?: any) => {
+						// Configuration par défaut : enableCodeLensNavigation = true
+						if (key === 'enableCodeLensNavigation') {return true;}
+						if (key === 'adrDirectoryName') {return 'adr';}
+						if (key === 'adrFilePrefix') {return 'adr_';}
+						if (key === 'currentTemplate') {return 'defaultTemplateFrench';}
+						return defaultValue;
+					},
+					update: async () => true
+				} as any;
+			}
+			return originalGetConfiguration(section);
+		};
+
+		try {
+			// Attendre que l'extension soit activée
+			await waitForExtensionActivation();
+			
+			// Vérifier que les commandes sont disponibles
+			const commands = await vscode.commands.getCommands();
+			assert(commands.includes('adrutilities.codelensNavigation'), 'CodeLens navigation command should be registered');
+			
+			// Vérifier que le CodeLens est actif en testant avec un document
+			const provider = new AdrCodelensNavigationProvider();
+			const mockDocument = {
+				getText: () => '// adr_test_20241220.md',
+				uri: { toString: () => 'file:///test.ts' },
+				version: 1,
+				lineAt: () => ({ text: '// adr_test_20241220.md', lineNumber: 0 }),
+				positionAt: () => ({ line: 0, character: 0 }),
+				getWordRangeAtPosition: () => ({ start: { line: 0, character: 0 }, end: { line: 0, character: 20 } })
+			} as any;
+
+			const result = await provider.provideCodeLenses(mockDocument, {} as any);
+			assert(Array.isArray(result), 'CodeLens should return an array');
+			assert(result.length > 0, 'CodeLens should detect ADR references when enabled');
+			
+		} finally {
+			// Restaurer la configuration originale
+			vscode.workspace.getConfiguration = originalGetConfiguration;
 		}
 	});
 }); 

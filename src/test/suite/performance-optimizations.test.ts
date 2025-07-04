@@ -170,19 +170,16 @@ suite('Performance Optimizations Test Suite', () => {
 	});
 
 	/**
-	 * Test que la configuration enableCodeLensOnStartup contrôle l'activation
+	 * Test que la configuration enableCodeLensNavigation contrôle l'activation
 	 */
-	test('enableCodeLensOnStartup configuration should control activation', async () => {
-		// Test avec enableCodeLensOnStartup = false
+	test('enableCodeLensNavigation configuration should control activation', async () => {
+		// Test avec enableCodeLensNavigation = false
 		const originalGet = vscode.workspace.getConfiguration;
 		vscode.workspace.getConfiguration = function() {
 			return {
 				get: function(key: string) {
-					if (key === 'enableCodeLensOnStartup') {
-						return false;
-					}
 					if (key === 'enableCodeLensNavigation') {
-						return true;
+						return false;
 					}
 					return 'adr_';
 				}
