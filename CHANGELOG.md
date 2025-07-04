@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/fpouyez/AdrUtilities/compare/v1.4.2...v1.4.3) (2025-07-04)
+
+
+### Bug Fixes
+
+* Tempo dans le workflow CI pour synchro GIT ([71aa3e8](https://github.com/fpouyez/AdrUtilities/commit/71aa3e8c8f08e9a3f6c27d411fe6367b31543fde))
+
 ## [1.4.2](https://github.com/fpouyez/AdrUtilities/compare/v1.4.1...v1.4.2) (2025-07-04)
 
 
