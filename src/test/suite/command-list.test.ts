@@ -6,7 +6,7 @@ suite('Command-List Test Suite', () => {
 	vscode.window.showInformationMessage('Start all list tests.');
 
 	test('List should return empty array when no ADRs found', async () => {
-        let adrList = await list();
+        const adrList = await list();
 		assert.strictEqual(0, adrList.length);
 	});
 
@@ -21,11 +21,11 @@ suite('Command-List Test Suite', () => {
 					}
 					return 'adr_';
 				}
-			} as any;
+			} as vscode.WorkspaceConfiguration;
 		};
 
 		try {
-			let adrList = await list();
+			const adrList = await list();
 			// Devrait utiliser le préfixe par défaut et ne pas planter
 			assert(Array.isArray(adrList));
 		} finally {
@@ -39,10 +39,10 @@ suite('Command-List Test Suite', () => {
 		const originalFindFiles = vscode.workspace.findFiles;
 		vscode.workspace.findFiles = function() {
 			return Promise.reject(new Error('Simulated error'));
-		} as any;
+		} as unknown as typeof vscode.workspace.findFiles;
 
 		try {
-			let adrList = await list();
+			const adrList = await list();
 			// Devrait retourner un tableau vide en cas d'erreur
 			assert.strictEqual(adrList.length, 0);
 		} finally {
@@ -60,10 +60,10 @@ suite('Command-List Test Suite', () => {
 		
 		vscode.workspace.findFiles = function() {
 			return Promise.resolve(mockFiles);
-		} as any;
+		} as unknown as typeof vscode.workspace.findFiles;
 
 		try {
-			let adrList = await list();
+			const adrList = await list();
 			// Devrait être limité à 1000 fichiers maximum
 			assert(adrList.length <= 1000);
 		} finally {

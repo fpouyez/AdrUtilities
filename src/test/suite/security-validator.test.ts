@@ -1,5 +1,4 @@
 import * as assert from 'assert';
-import * as vscode from 'vscode';
 import { SecurityValidator } from '../../security-validator';
 
 suite('Security Validator Test Suite', () => {
@@ -16,15 +15,15 @@ suite('Security Validator Test Suite', () => {
 		];
 
 		validTitles.forEach(title => {
-			assert.strictEqual(SecurityValidator.validateAdrTitle(title), true, `Title "${title}" should be valid`);
+			assert.strictEqual(SecurityValidator.validateAdrTitle(title as string), true, `Title "${title}" should be valid`);
 		});
 	});
 
 	test('validateAdrTitle should reject invalid titles', () => {
 		const invalidTitles = [
 			'', // Empty
-			null as any, // Null
-			undefined as any, // Undefined
+			null as unknown, // Null
+			undefined as unknown, // Undefined
 			'<script>alert("xss")</script>', // XSS attempt
 			'../../../etc/passwd', // Path traversal
 			'a'.repeat(101), // Too long
@@ -34,7 +33,7 @@ suite('Security Validator Test Suite', () => {
 		];
 
 		invalidTitles.forEach(title => {
-			assert.strictEqual(SecurityValidator.validateAdrTitle(title), false, `Title "${title}" should be invalid`);
+			assert.strictEqual(SecurityValidator.validateAdrTitle(title as string), false, `Title "${title}" should be invalid`);
 		});
 	});
 
@@ -59,57 +58,164 @@ suite('Security Validator Test Suite', () => {
 		];
 
 		invalidTitles.forEach(title => {
-			assert.strictEqual(SecurityValidator.sanitizeAdrTitle(title), null);
+			assert.strictEqual(SecurityValidator.sanitizeAdrTitle(title as string), null);
 		});
 	});
 
-	test('escapeRegex should escape special regex characters', () => {
-		const testCases = [
-			{ input: 'adr_', expected: 'adr_' },
-			{ input: 'adr.*+?^${}()|[\\]', expected: 'adr\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\\\\\]' },
-			{ input: 'test[0-9]', expected: 'test\\[0\\-9\\]' }
+	test('escapeRegex should handle valid strings', () => {
+		assert.strictEqual(SecurityValidator.escapeRegex('adr_'), 'adr_');
+		assert.strictEqual(SecurityValidator.escapeRegex('adr.*+?^${}()|[\\]'), 'adr\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\\\\\]');
+		assert.strictEqual(SecurityValidator.escapeRegex('simple'), 'simple');
+		assert.strictEqual(SecurityValidator.escapeRegex(''), '');
+	});
+
+	test('escapeRegex should handle invalid inputs', () => {
+		// Test avec des valeurs invalides
+		const invalidInputs = [
+			null as unknown as string, // Null
+			undefined as unknown as string, // Undefined
 		];
 
-		testCases.forEach(testCase => {
-			const result = SecurityValidator.escapeRegex(testCase.input);
-			assert.strictEqual(result, testCase.expected);
+		invalidInputs.forEach(input => {
+			assert.strictEqual(SecurityValidator.escapeRegex(input as string), '');
 		});
 	});
 
-	test('escapeRegex should handle edge cases', () => {
-		assert.strictEqual(SecurityValidator.escapeRegex(''), '');
-		assert.strictEqual(SecurityValidator.escapeRegex(null as any), '');
-		assert.strictEqual(SecurityValidator.escapeRegex(undefined as any), '');
+	test('escapeRegex should handle special regex characters', () => {
+		const specialChars = [
+			{ input: '.', expected: '\\.' },
+			{ input: '*', expected: '\\*' },
+			{ input: '+', expected: '\\+' },
+			{ input: '?', expected: '\\?' },
+			{ input: '^', expected: '\\^' },
+			{ input: '$', expected: '\\$' },
+			{ input: '{', expected: '\\{' },
+			{ input: '}', expected: '\\}' },
+			{ input: '(', expected: '\\(' },
+			{ input: ')', expected: '\\)' },
+			{ input: '[', expected: '\\[' },
+			{ input: ']', expected: '\\]' },
+			{ input: '\\', expected: '\\\\' },
+			{ input: '|', expected: '\\|' }
+		];
+
+		specialChars.forEach(({ input, expected }) => {
+			assert.strictEqual(SecurityValidator.escapeRegex(input as string), expected);
+		});
+	});
+
+	test('escapeRegex should handle mixed content', () => {
+		assert.strictEqual(SecurityValidator.escapeRegex('adr_123'), 'adr_123');
+		assert.strictEqual(SecurityValidator.escapeRegex('adr.*test'), 'adr\\.\\*test');
+		assert.strictEqual(SecurityValidator.escapeRegex('test[123]'), 'test\\[123\\]');
+		assert.strictEqual(SecurityValidator.escapeRegex('file(1).txt'), 'file\\(1\\)\\.txt');
+	});
+
+	test('escapeRegex should handle null and undefined explicitly', () => {
+		assert.strictEqual(SecurityValidator.escapeRegex(null as unknown as string), '');
+		assert.strictEqual(SecurityValidator.escapeRegex(undefined as unknown as string), '');
 	});
 
 	test('validateAdrPrefix should accept valid prefixes', () => {
 		const validPrefixes = [
 			'adr_',
+			'adr-',
 			'ADR_',
-			'decision_',
-			'arch_',
-			'prefix123'
+			'ADR-',
+			'adr123',
+			'adr_123',
+			'adr-123',
+			'a',
+			'AD',
+			'adr_long_prefix_123'
 		];
 
 		validPrefixes.forEach(prefix => {
-			assert.strictEqual(SecurityValidator.validateAdrPrefix(prefix), true, `Prefix "${prefix}" should be valid`);
+			assert.strictEqual(SecurityValidator.validateAdrPrefix(prefix as string), true, `Prefix "${prefix}" should be valid`);
 		});
 	});
 
 	test('validateAdrPrefix should reject invalid prefixes', () => {
 		const invalidPrefixes = [
-			'', // Empty
-			null as any, // Null
-			undefined as any, // Undefined
-			'a'.repeat(21), // Too long
-			'prefix with spaces', // Spaces
-			'prefix-with-special-chars!', // Special characters
-			'prefix/with/slashes' // Slashes
+			'',
+			'adr.',
+			'adr/',
+			'adr\\',
+			'adr*',
+			'adr?',
+			'adr+',
+			'adr^',
+			'adr$',
+			'adr{',
+			'adr}',
+			'adr(',
+			'adr)',
+			'adr[',
+			'adr]',
+			'adr|',
+			'adr<',
+			'adr>',
+			'adr&',
+			'adr#',
+			'adr@',
+			'adr!',
+			'adr%',
+			'adr=',
+			'adr+',
+			'adr;',
+			'adr:',
+			'adr"',
+			'adr\'',
+			'adr,',
+			'adr.',
+			'adr ',
+			'adr\t',
+			'adr\n',
+			'adr\r'
 		];
 
 		invalidPrefixes.forEach(prefix => {
-			assert.strictEqual(SecurityValidator.validateAdrPrefix(prefix), false, `Prefix "${prefix}" should be invalid`);
+			assert.strictEqual(SecurityValidator.validateAdrPrefix(prefix as string), false, `Prefix "${prefix}" should be invalid`);
 		});
+	});
+
+	test('validateAdrPrefix should handle edge cases', () => {
+		// Test avec des valeurs invalides
+		const invalidInputs = [
+			null as unknown as string, // Null
+			undefined as unknown as string, // Undefined
+		];
+
+		invalidInputs.forEach(input => {
+			assert.strictEqual(SecurityValidator.validateAdrPrefix(input as string), false);
+		});
+	});
+
+	test('validateAdrPrefix should handle empty and whitespace', () => {
+		assert.strictEqual(SecurityValidator.validateAdrPrefix(''), false);
+		assert.strictEqual(SecurityValidator.validateAdrPrefix(' '), false);
+		assert.strictEqual(SecurityValidator.validateAdrPrefix('\t'), false);
+		assert.strictEqual(SecurityValidator.validateAdrPrefix('\n'), false);
+		assert.strictEqual(SecurityValidator.validateAdrPrefix('  '), false);
+	});
+
+	test('validateAdrPrefix should handle very long prefixes', () => {
+		const longValidPrefix = 'a'.repeat(20); // Exactement 20 caractères (limite max)
+		const longInvalidPrefix = 'a'.repeat(21); // Plus de 20 caractères
+
+		assert.strictEqual(SecurityValidator.validateAdrPrefix(longValidPrefix as string), true);
+		assert.strictEqual(SecurityValidator.validateAdrPrefix(longInvalidPrefix as string), false);
+	});
+
+	test('validateAdrPrefix should handle unicode characters', () => {
+		// Les caractères unicode ne sont pas acceptés par le pattern actuel
+		assert.strictEqual(SecurityValidator.validateAdrPrefix('adré' as string), false);
+		assert.strictEqual(SecurityValidator.validateAdrPrefix('adrñ' as string), false);
+	});
+
+	test('validateAdrPrefix should handle null and undefined explicitly', () => {
+		assert.strictEqual(SecurityValidator.validateAdrPrefix(null as unknown as string), false);
+		assert.strictEqual(SecurityValidator.validateAdrPrefix(undefined as unknown as string), false);
 	});
 
 	test('validateAdrDirectoryName should accept valid directory names', () => {
@@ -122,15 +228,15 @@ suite('Security Validator Test Suite', () => {
 		];
 
 		validNames.forEach(name => {
-			assert.strictEqual(SecurityValidator.validateAdrDirectoryName(name), true, `Directory name "${name}" should be valid`);
+			assert.strictEqual(SecurityValidator.validateAdrDirectoryName(name as string), true, `Directory name "${name}" should be valid`);
 		});
 	});
 
 	test('validateAdrDirectoryName should reject invalid directory names', () => {
 		const invalidNames = [
 			'', // Empty
-			null as any, // Null
-			undefined as any, // Undefined
+			null as unknown, // Null
+			undefined as unknown, // Undefined
 			'a'.repeat(51), // Too long
 			'dir with spaces', // Spaces
 			'dir-with-special-chars!', // Special characters
@@ -138,7 +244,7 @@ suite('Security Validator Test Suite', () => {
 		];
 
 		invalidNames.forEach(name => {
-			assert.strictEqual(SecurityValidator.validateAdrDirectoryName(name), false, `Directory name "${name}" should be invalid`);
+			assert.strictEqual(SecurityValidator.validateAdrDirectoryName(name as string), false, `Directory name "${name}" should be invalid`);
 		});
 	});
 
@@ -193,8 +299,8 @@ suite('Security Validator Test Suite', () => {
 	test('validateFilePath should reject invalid paths', () => {
 		const invalidPaths = [
 			'', // Empty
-			null as any, // Null
-			undefined as any, // Undefined
+			null as unknown, // Null
+			undefined as unknown, // Undefined
 			'../../../etc/passwd', // Path traversal
 			'<script>alert("xss")</script>', // XSS attempt
 			'/etc/passwd', // System path
@@ -204,7 +310,7 @@ suite('Security Validator Test Suite', () => {
 		];
 
 		invalidPaths.forEach(path => {
-			assert.strictEqual(SecurityValidator.validateFilePath(path), false, `Path "${path}" should be invalid`);
+			assert.strictEqual(SecurityValidator.validateFilePath(path as string), false, `Path "${path}" should be invalid`);
 		});
 	});
 
@@ -216,7 +322,7 @@ suite('Security Validator Test Suite', () => {
 		];
 
 		validTestPaths.forEach(path => {
-			assert.strictEqual(SecurityValidator.validateFilePath(path), true, `Path "${path}" should be valid`);
+			assert.strictEqual(SecurityValidator.validateFilePath(path as string), true, `Path "${path}" should be valid`);
 		});
 	});
 }); 

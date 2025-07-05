@@ -5,12 +5,12 @@ import { convertSeparators, findLastDirectoryName, convertSeparatorsOnUri } from
 suite('ADR FilePath Test Suite', () => {
 
 	test('Convert separator should replace \\ to /', async () => {
-        let obtain = convertSeparators("test\\path\\To\\Convert");
+        const obtain = convertSeparators("test\\path\\To\\Convert");
 		assert.strictEqual("test/path/To/Convert", obtain);
 	});
 
     test('Convert separator should replace \\ to / from vscode.Uri', async () => {
-        let obtain = convertSeparators(vscode.Uri.file("test/path/To/Convert").fsPath);
+        const obtain = convertSeparators(vscode.Uri.file("test/path/To/Convert").fsPath);
 		assert(obtain.endsWith("test/path/To/Convert"));
 	});
 
@@ -36,7 +36,7 @@ suite('ADR FilePath Test Suite', () => {
 
 	test('Convert separators on URI should throw error for invalid URI', async () => {
 		assert.throws(() => {
-			convertSeparatorsOnUri(null as any);
+			convertSeparatorsOnUri(null as unknown as vscode.Uri);
 		}, Error, 'URI invalide');
 	});
 
@@ -59,7 +59,7 @@ suite('ADR FilePath Test Suite', () => {
 	});
 
 	test('Find last directory name should return undefined for null array', async () => {
-		const dir = findLastDirectoryName(null as any);
+		const dir = findLastDirectoryName(null as unknown as string[]);
 		assert.strictEqual(dir, undefined);
 	});
 

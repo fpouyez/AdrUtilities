@@ -31,7 +31,7 @@ export const pickTemplate = (): string => {
 		try {
 			const content = fs.readFileSync(customTemplatePath, 'utf8');
 			return content;
-		} catch (e) {
+		} catch {
 			vscode.window.showWarningMessage(`Unable to read custom template: ${customTemplatePath}. Falling back to default template.`);
 		}
 	}

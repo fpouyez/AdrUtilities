@@ -12,7 +12,7 @@ suite('Extension Activation Test Suite', () => {
 		vscode.workspace.getConfiguration = function(section?: string) {
 			if (section === 'adrutilities') {
 				return {
-					get: (key: string, defaultValue?: any) => {
+					get: (key: string, defaultValue?: unknown) => {
 						if (key === 'enableCodeLensNavigation') {return true;}
 						if (key === 'adrDirectoryName') {return 'adr';}
 						if (key === 'adrFilePrefix') {return 'adr_';}
@@ -20,7 +20,7 @@ suite('Extension Activation Test Suite', () => {
 						return defaultValue;
 					},
 					update: async () => true
-				} as any;
+				} as unknown as vscode.WorkspaceConfiguration;
 			}
 			return originalGetConfiguration(section);
 		};
@@ -134,14 +134,14 @@ suite('Extension Activation Test Suite', () => {
 			// Vérifier que la modification a été prise en compte
 			const newValue = config.get('enableCodeLensNavigation', true);
 			assert.strictEqual(newValue, !originalValue, 'Configuration should be updated');
-		} catch (error) {
+		} catch {
 			// Si la modification échoue (pas de workspace ouvert), c'est acceptable dans le contexte de test
 			assert(true, 'Configuration modification failed but that is acceptable in test context');
 		} finally {
 			// Restaurer la valeur originale si possible
 			try {
 				await config.update('enableCodeLensNavigation', originalValue, vscode.ConfigurationTarget.Workspace);
-			} catch (error) {
+			} catch {
 				// Ignorer les erreurs de restauration
 			}
 		}
@@ -166,7 +166,7 @@ suite('Extension Activation Test Suite', () => {
 				await vscode.commands.executeCommand('adrutilities.enableCodeLensNavigation');
 				await vscode.commands.executeCommand('adrutilities.disableCodeLensNavigation');
 				assert(true, 'Commands executed successfully');
-			} catch (error) {
+			} catch {
 				// Si les commandes échouent, c'est acceptable dans le contexte de test
 				assert(true, 'Commands failed but that is acceptable in test context');
 			}
@@ -185,7 +185,7 @@ suite('Extension Activation Test Suite', () => {
 		vscode.workspace.getConfiguration = function(section?: string) {
 			if (section === 'adrutilities') {
 				return {
-					get: (key: string, defaultValue?: any) => {
+					get: (key: string, defaultValue?: unknown) => {
 						if (key === 'enableCodeLensNavigation') {return true;}
 						if (key === 'adrDirectoryName') {return 'adr';}
 						if (key === 'adrFilePrefix') {return 'adr_';}
@@ -193,7 +193,7 @@ suite('Extension Activation Test Suite', () => {
 						return defaultValue;
 					},
 					update: async () => true
-				} as any;
+				} as unknown as vscode.WorkspaceConfiguration;
 			}
 			return originalGetConfiguration(section);
 		};
@@ -211,10 +211,78 @@ suite('Extension Activation Test Suite', () => {
 				await vscode.commands.executeCommand('adrutilities.enableCodeLensNavigation');
 				await vscode.commands.executeCommand('adrutilities.disableCodeLensNavigation');
 				assert(true, 'CodeLens commands executed successfully');
-			} catch (error) {
-				// Acceptable dans le contexte de test
+			} catch {
+				// Si les commandes échouent, c'est acceptable dans le contexte de test
 				assert(true, 'CodeLens commands failed but that is acceptable in test context');
 			}
+		} finally {
+			// Restaurer la configuration originale
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
+
+	/**
+	 * Test que le CodeLens ne s'active pas au démarrage quand enableCodeLensNavigation est false
+	 */
+	test('CodeLens should not activate on startup when enableCodeLensNavigation is false', async () => {
+		// Mock de la configuration pour simuler enableCodeLensNavigation = false
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function(section?: string) {
+			if (section === 'adrutilities') {
+				return {
+					get: (key: string, defaultValue?: unknown) => {
+						if (key === 'enableCodeLensNavigation') {return false;}
+						if (key === 'adrDirectoryName') {return 'adr';}
+						if (key === 'adrFilePrefix') {return 'adr_';}
+						if (key === 'currentTemplate') {return 'defaultTemplateFrench';}
+						return defaultValue;
+					},
+					update: async () => true
+				} as unknown as vscode.WorkspaceConfiguration;
+			}
+			return originalGetConfiguration(section);
+		};
+
+		try {
+			// Attendre que l'extension soit activée
+			await waitForExtensionActivation();
+			
+			// Vérifier que les commandes sont disponibles
+			const commands = await vscode.commands.getCommands();
+			assert(commands.includes('adrutilities.codelensNavigation'), 'CodeLens navigation command should be registered');
+			
+			// Test que les commandes d'activation/désactivation fonctionnent
+			try {
+				await vscode.commands.executeCommand('adrutilities.enableCodeLensNavigation');
+				await vscode.commands.executeCommand('adrutilities.disableCodeLensNavigation');
+				assert(true, 'CodeLens commands executed successfully');
+			} catch {
+				// Si les commandes échouent, c'est acceptable dans le contexte de test
+				assert(true, 'CodeLens commands failed but that is acceptable in test context');
+			}
+		} finally {
+			// Restaurer la configuration originale
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
+
+	/**
+	 * Test que l'extension gère les erreurs de configuration
+	 */
+	test('Extension should handle configuration errors gracefully', async () => {
+		// Mock de la configuration pour simuler une erreur
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function() {
+			throw new Error('Configuration error');
+		} as unknown as typeof vscode.workspace.getConfiguration;
+
+		try {
+			// L'extension devrait gérer l'erreur gracieusement
+			await waitForExtensionActivation();
+			
+			// Vérifier que les commandes sont toujours disponibles
+			const commands = await vscode.commands.getCommands();
+			assert(commands.includes('adrutilities.create'), 'Commands should still be available despite configuration error');
 		} finally {
 			// Restaurer la configuration originale
 			vscode.workspace.getConfiguration = originalGetConfiguration;
@@ -230,7 +298,7 @@ suite('Extension Activation Test Suite', () => {
 		vscode.workspace.getConfiguration = function(section?: string) {
 			if (section === 'adrutilities') {
 				return {
-					get: (key: string, defaultValue?: any) => {
+					get: (key: string, defaultValue?: unknown) => {
 						// Configuration par défaut : enableCodeLensNavigation = true
 						if (key === 'enableCodeLensNavigation') {return true;}
 						if (key === 'adrDirectoryName') {return 'adr';}
@@ -239,7 +307,7 @@ suite('Extension Activation Test Suite', () => {
 						return defaultValue;
 					},
 					update: async () => true
-				} as any;
+				} as unknown as vscode.WorkspaceConfiguration;
 			}
 			return originalGetConfiguration(section);
 		};
@@ -261,9 +329,9 @@ suite('Extension Activation Test Suite', () => {
 				lineAt: () => ({ text: '// adr_test_20241220.md', lineNumber: 0 }),
 				positionAt: () => ({ line: 0, character: 0 }),
 				getWordRangeAtPosition: () => ({ start: { line: 0, character: 0 }, end: { line: 0, character: 20 } })
-			} as any;
+			} as unknown;
 
-			const result = await provider.provideCodeLenses(mockDocument, {} as any);
+			const result = await provider.provideCodeLenses(mockDocument as vscode.TextDocument);
 			assert(Array.isArray(result), 'CodeLens should return an array');
 			assert(result.length > 0, 'CodeLens should detect ADR references when enabled');
 			

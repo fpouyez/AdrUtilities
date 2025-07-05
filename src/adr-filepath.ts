@@ -49,7 +49,7 @@ export function findLastDirectoryName(segments: string[]): string | undefined {
     }
     
     let lastDirName: string | undefined;
-    let lastSegment = segments.at(-1);
+    const lastSegment = segments.at(-1);
 
     if (!!lastSegment && lastSegment.indexOf(".") > 0) {
         segments.pop();

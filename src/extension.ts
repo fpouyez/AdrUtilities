@@ -108,7 +108,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
     });
 
-    const codelensNavigationCommand = vscode.commands.registerCommand("adrutilities.codelensNavigation", async (args: any) => {
+    const codelensNavigationCommand = vscode.commands.registerCommand("adrutilities.codelensNavigation", async (args: vscode.Uri) => {
       try {
         if (!args || !args.fsPath) {
           throw new Error('Arguments invalides pour la navigation CodeLens');

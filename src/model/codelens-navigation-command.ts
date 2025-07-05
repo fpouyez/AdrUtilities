@@ -5,7 +5,7 @@ export class CodeLensNavigationCommand implements Command
     readonly title = "Open this ADR";
     readonly tooltip = "Open this ADR in a new tab";
     readonly command = "adrutilities.codelensNavigation";
-    readonly arguments?: any[];
+    readonly arguments?: [Uri];
     
     constructor(uri: Uri) {
         this.arguments = [uri];

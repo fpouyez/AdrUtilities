@@ -4,7 +4,7 @@ import { glob } from 'glob';
 
 const testsRoot = path.resolve(__dirname, '..');
 
- async function findTestFiles() : Promise<any[]> {
+ async function findTestFiles() : Promise<string[]> {
 	return await glob("**/**.test.js", { cwd: testsRoot });
  }
 

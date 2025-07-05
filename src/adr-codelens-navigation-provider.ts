@@ -1,4 +1,4 @@
-import { workspace, CodeLens, CodeLensProvider, TextDocument, CancellationToken, Position, window, commands, TextEditor } from "vscode";
+import { workspace, CodeLens, CodeLensProvider, TextDocument, CancellationToken, Position, window, TextEditor } from "vscode";
 import { list } from "./command-list";
 import { CodeLensEmptyCommand } from "./model/codelens-empty-command";
 import { CodeLensNavigationCommand } from "./model/codelens-navigation-command";
@@ -39,7 +39,7 @@ export class AdrCodelensNavigationProvider implements CodeLensProvider {
 		}, 5 * 60 * 1000);
 	}
 
-	public provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
+	public provideCodeLenses(document: TextDocument): CodeLens[] | Thenable<CodeLens[]> {
 		try {
 			if (this.isCodeLensNavigationActivated()) {
 				// Optimisation : vérification du cache
@@ -121,7 +121,7 @@ export class AdrCodelensNavigationProvider implements CodeLensProvider {
 	public async resolveCodeLens(codeLens: CodeLens, token: CancellationToken) {
 		try {
 			if (this.isCodeLensNavigationActivated()) {
-				var editor = window.activeTextEditor;
+				const editor = window.activeTextEditor;
 				if (!editor) {
 					token.isCancellationRequested = true;
 					return codeLens; // No open text editor
@@ -145,14 +145,14 @@ export class AdrCodelensNavigationProvider implements CodeLensProvider {
 
 	private async findAdrUri(editor: TextEditor, codeLens: CodeLens) {
 		try {
-			var text = editor.document.getText(codeLens.range).trim();
+			const text = editor.document.getText(codeLens.range).trim();
 			
 			// Validation du texte extrait
 			if (!text || text.length > 200) { // Limite de longueur pour éviter les attaques
 				return null;
 			}
 			
-			let listAdr = await list();
+			const listAdr = await list();
 			return listAdr.find((value) => {
 				try {
 					return value.fsPath.indexOf(text) >= 0;

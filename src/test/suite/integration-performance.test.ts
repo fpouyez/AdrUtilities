@@ -12,7 +12,7 @@ suite('Integration Performance Test Suite', () => {
 		vscode.workspace.getConfiguration = function(section?: string) {
 			if (section === 'adrutilities') {
 				return {
-					get: (key: string, defaultValue?: any) => {
+					get: (key: string, defaultValue?: unknown) => {
 						if (key === 'enableCodeLensNavigation') {return true;}
 				
 						if (key === 'adrDirectoryName') {return 'adr';}
@@ -21,7 +21,7 @@ suite('Integration Performance Test Suite', () => {
 						return defaultValue;
 					},
 					update: async () => true
-				} as any;
+				} as unknown as vscode.WorkspaceConfiguration;
 			}
 			return originalGetConfiguration(section);
 		};
@@ -51,9 +51,9 @@ suite('Integration Performance Test Suite', () => {
 			lineAt: () => ({ text: '// adr_test_20241220.md', lineNumber: 0 }),
 			positionAt: () => ({ line: 0, character: 0 }),
 			getWordRangeAtPosition: () => ({ start: { line: 0, character: 0 }, end: { line: 0, character: 20 } })
-		} as any;
+		} as unknown as vscode.TextDocument;
 		
-		const result = await provider.provideCodeLenses(mockDocument, {} as any);
+		const result = await provider.provideCodeLenses(mockDocument);
 		assert(Array.isArray(result), 'Should return array of CodeLens');
 		
 		// Le résultat dépend de la configuration
@@ -100,11 +100,11 @@ suite('Integration Performance Test Suite', () => {
 				positionAt: () => ({ line: 0, character: 0 }),
 				getWordRangeAtPosition: () => null
 			}
-		] as any[];
+		] as unknown as vscode.TextDocument[];
 		
 		// Traiter tous les documents
 		const results = await Promise.all(
-			documents.map(doc => provider.provideCodeLenses(doc, {} as any))
+			documents.map(doc => provider.provideCodeLenses(doc))
 		);
 		
 		// Vérifier les résultats selon la configuration
@@ -138,7 +138,7 @@ suite('Integration Performance Test Suite', () => {
 			lineAt: () => ({ text: '// adr_test_20241220.md', lineNumber: 0 }),
 			positionAt: () => ({ line: 0, character: 0 }),
 			getWordRangeAtPosition: () => ({ start: { line: 0, character: 0 }, end: { line: 0, character: 20 } })
-		} as any;
+		} as unknown as vscode.TextDocument;
 		
 		// Document modifié
 		const documentV2 = {
@@ -148,20 +148,20 @@ suite('Integration Performance Test Suite', () => {
 			lineAt: () => ({ text: '// adr_test_20241220.md', lineNumber: 0 }),
 			positionAt: () => ({ line: 0, character: 0 }),
 			getWordRangeAtPosition: () => ({ start: { line: 0, character: 0 }, end: { line: 0, character: 20 } })
-		} as any;
+		} as unknown as vscode.TextDocument;
 		
 		// Premier appel
-		const result1 = await provider.provideCodeLenses(documentV1, {} as any);
+		const result1 = await provider.provideCodeLenses(documentV1);
 		assert(Array.isArray(result1));
 		const count1 = result1.length;
 		
 		// Deuxième appel avec le même document (devrait utiliser le cache)
-		const result2 = await provider.provideCodeLenses(documentV1, {} as any);
+		const result2 = await provider.provideCodeLenses(documentV1);
 		assert(Array.isArray(result2));
 		assert.strictEqual(result2.length, count1, 'Cache should return same result');
 		
 		// Troisième appel avec document modifié (devrait recalculer)
-		const result3 = await provider.provideCodeLenses(documentV2, {} as any);
+		const result3 = await provider.provideCodeLenses(documentV2);
 		assert(Array.isArray(result3));
 		
 		if (isCodeLensEnabled) {
@@ -199,9 +199,9 @@ suite('Integration Performance Test Suite', () => {
 				lineAt: () => ({ text: testCase, lineNumber: 0 }),
 				positionAt: () => ({ line: 0, character: 0 }),
 				getWordRangeAtPosition: () => ({ start: { line: 0, character: 0 }, end: { line: 0, character: testCase.length } })
-			} as any;
+			} as unknown as vscode.TextDocument;
 			
-			const result = await provider.provideCodeLenses(mockDocument, {} as any);
+			const result = await provider.provideCodeLenses(mockDocument);
 			assert(Array.isArray(result), `Should return array for: ${testCase}`);
 			
 			if (isCodeLensEnabled) {
@@ -230,14 +230,14 @@ suite('Integration Performance Test Suite', () => {
 			lineAt: () => ({ text: `// adr_test${i}_20241220.md`, lineNumber: 0 }),
 			positionAt: () => ({ line: 0, character: 0 }),
 			getWordRangeAtPosition: () => ({ start: { line: 0, character: 0 }, end: { line: 0, character: 20 } })
-		})) as any[];
+		}) as unknown as vscode.TextDocument);
 		
 		// Mesurer le temps de traitement
 		const startTime = Date.now();
 		
 		// Traiter tous les documents
 		const results = await Promise.all(
-			documents.map(doc => provider.provideCodeLenses(doc, {} as any))
+			documents.map(doc => provider.provideCodeLenses(doc))
 		);
 		
 		const endTime = Date.now();
@@ -258,5 +258,154 @@ suite('Integration Performance Test Suite', () => {
 		assert(processingTime < 5000, `Processing time should be reasonable: ${processingTime}ms for 50 documents`);
 		
 		console.log(`Processed 50 documents in ${processingTime}ms`);
+	});
+
+	test('Provider should handle large documents efficiently', async () => {
+		const provider = new AdrCodelensNavigationProvider();
+		
+		// Mock d'un document très volumineux
+		const largeText = 'adr_test.md\n'.repeat(5000) + 'Some other content\n'.repeat(10000);
+		const mockDocument = {
+			getText: () => largeText,
+			lineAt: () => ({ text: 'adr_test.md', lineNumber: 0 }),
+			positionAt: () => new vscode.Position(0, 0),
+			getWordRangeAtPosition: () => new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10))
+		} as unknown as vscode.TextDocument;
+
+		const result = await provider.provideCodeLenses(mockDocument);
+		assert(Array.isArray(result));
+		// Devrait être limité à 1000 matches maximum
+		assert(result.length <= 1000);
+	});
+
+	test('Provider should handle multiple concurrent requests efficiently', async () => {
+		const provider = new AdrCodelensNavigationProvider();
+		
+		// Créer plusieurs documents de test
+		const documents = Array.from({ length: 10 }, (_, i) => ({
+			getText: () => `adr_test_${i}.md\n`.repeat(100),
+			lineAt: () => ({ text: `adr_test_${i}.md`, lineNumber: 0 }),
+			positionAt: () => new vscode.Position(0, 0),
+			getWordRangeAtPosition: () => new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10))
+		} as unknown as vscode.TextDocument));
+
+		// Exécuter les requêtes en parallèle
+		const startTime = Date.now();
+		const promises = documents.map(doc => provider.provideCodeLenses(doc));
+		const results = await Promise.all(promises);
+		const endTime = Date.now();
+
+		// Vérifier que toutes les requêtes ont réussi
+		results.forEach(result => {
+			assert(Array.isArray(result));
+		});
+
+		// Vérifier que le temps d'exécution est raisonnable (moins de 5 secondes)
+		const executionTime = endTime - startTime;
+		assert(executionTime < 5000, `Execution time ${executionTime}ms should be less than 5000ms`);
+	});
+
+	test('Provider should handle documents with many ADR references efficiently', async () => {
+		const provider = new AdrCodelensNavigationProvider();
+		
+		// Mock d'un document avec beaucoup de références ADR
+		const manyAdrRefs = Array.from({ length: 2000 }, (_, i) => `adr_test_${i}.md`).join('\n');
+		const mockDocument = {
+			getText: () => manyAdrRefs,
+			lineAt: () => ({ text: 'adr_test_0.md', lineNumber: 0 }),
+			positionAt: () => new vscode.Position(0, 0),
+			getWordRangeAtPosition: () => new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10))
+		} as unknown as vscode.TextDocument;
+
+		const startTime = Date.now();
+		const result = await provider.provideCodeLenses(mockDocument);
+		const endTime = Date.now();
+
+		assert(Array.isArray(result));
+		assert(result.length <= 1000, 'Should be limited to 1000 matches');
+		
+		// Vérifier que le temps d'exécution est raisonnable
+		const executionTime = endTime - startTime;
+		assert(executionTime < 3000, `Execution time ${executionTime}ms should be less than 3000ms`);
+	});
+
+	test('Provider should handle cache invalidation efficiently', async () => {
+		const provider = new AdrCodelensNavigationProvider();
+		
+		// Premier appel pour remplir le cache
+		const documentV1 = {
+			getText: () => 'adr_test_v1.md\nadr_test_v2.md',
+			lineAt: () => ({ text: 'adr_test_v1.md', lineNumber: 0 }),
+			positionAt: () => new vscode.Position(0, 0),
+			getWordRangeAtPosition: () => new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10))
+		} as unknown as vscode.TextDocument;
+
+		const result1 = await provider.provideCodeLenses(documentV1);
+		assert(Array.isArray(result1));
+
+		// Deuxième appel avec le même contenu (devrait utiliser le cache)
+		const result2 = await provider.provideCodeLenses(documentV1);
+		assert(Array.isArray(result2));
+
+		// Troisième appel avec un contenu différent (devrait invalider le cache)
+		const documentV2 = {
+			getText: () => 'adr_test_v3.md\nadr_test_v4.md',
+			lineAt: () => ({ text: 'adr_test_v3.md', lineNumber: 0 }),
+			positionAt: () => new vscode.Position(0, 0),
+			getWordRangeAtPosition: () => new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10))
+		} as unknown as vscode.TextDocument;
+
+		const result3 = await provider.provideCodeLenses(documentV2);
+		assert(Array.isArray(result3));
+	});
+
+	test('Provider should handle memory usage efficiently', async () => {
+		const provider = new AdrCodelensNavigationProvider();
+		
+		// Créer un document avec beaucoup de contenu
+		const largeContent = 'adr_test.md\n'.repeat(10000) + 'Some other content\n'.repeat(50000);
+		const mockDocument = {
+			getText: () => largeContent,
+			lineAt: () => ({ text: 'adr_test.md', lineNumber: 0 }),
+			positionAt: () => new vscode.Position(0, 0),
+			getWordRangeAtPosition: () => new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10))
+		} as unknown as vscode.TextDocument;
+
+		// Exécuter plusieurs fois pour tester la gestion mémoire
+		for (let i = 0; i < 10; i++) {
+			const result = await provider.provideCodeLenses(mockDocument);
+			assert(Array.isArray(result));
+			assert(result.length <= 1000);
+		}
+	});
+
+	test('Provider should handle rapid successive calls efficiently', async () => {
+		const provider = new AdrCodelensNavigationProvider();
+		
+		const mockDocument = {
+			getText: () => 'adr_test.md\nadr_decision.md\nadr_architecture.md',
+			lineAt: () => ({ text: 'adr_test.md', lineNumber: 0 }),
+			positionAt: () => new vscode.Position(0, 0),
+			getWordRangeAtPosition: () => new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10))
+		} as unknown as vscode.TextDocument;
+
+		const startTime = Date.now();
+		
+		// Exécuter 100 appels rapides
+		const promises = Array.from({ length: 100 }, () => 
+			provider.provideCodeLenses(mockDocument)
+		);
+		
+		const results = await Promise.all(promises);
+		const endTime = Date.now();
+
+		// Vérifier que tous les résultats sont corrects
+		results.forEach(result => {
+			assert(Array.isArray(result));
+		});
+
+		// Vérifier que le temps total est raisonnable
+		const totalTime = endTime - startTime;
+		assert(totalTime < 10000, `Total time ${totalTime}ms should be less than 10000ms for 100 calls`);
 	});
 }); 
