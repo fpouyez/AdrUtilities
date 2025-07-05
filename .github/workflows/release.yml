@@ -30,18 +30,32 @@ jobs:
         with:
           node-version: 20
 
-      # Garde-fou : vérifier qu'une release sera créée
-      - name: Dry run to verify release will be created
+      # Vérifier si une release sera créée
+      - name: Check if release will be created
+        id: check_release
         env:
           GITHUB_TOKEN: ${{ secrets.SEM_RELEASE_PAT }}
         run: |
-          npx semantic-release --dry-run | grep -q "The next release version is" || (echo "No release will be created" && exit 1)
+          if npx semantic-release --dry-run | grep -q "The next release version is"; then
+            echo "will_release=true" >> $GITHUB_OUTPUT
+            echo "✅ A new release will be created"
+          else
+            echo "will_release=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No release will be created - no changes requiring a release"
+          fi
 
       - name: Semantic Release 🔥
         id: semantic_release
+        if: steps.check_release.outputs.will_release == 'true'
         uses: cycjimmy/semantic-release-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.SEM_RELEASE_PAT }}
+
+      - name: Skip release - no changes
+        if: steps.check_release.outputs.will_release == 'false'
+        run: |
+          echo "ℹ️  No semantic changes detected - skipping release"
+          echo "new_release_version=" >> $GITHUB_OUTPUT
 
   publish:
     needs: release
