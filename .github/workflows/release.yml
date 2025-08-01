@@ -47,7 +47,7 @@ jobs:
       - name: Semantic Release 🔥
         id: semantic_release
         if: steps.check_release.outputs.will_release == 'true'
-        uses: cycjimmy/semantic-release-action@v3
+        uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.SEM_RELEASE_PAT }}
 
