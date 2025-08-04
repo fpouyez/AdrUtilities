@@ -1,3 +1,10 @@
+## [1.4.5](https://github.com/fpouyez/AdrUtilities/compare/v1.4.4...v1.4.5) (2025-08-04)
+
+
+### Bug Fixes
+
+* update TypeScript target to ES2022 for @types/node 24.1.0 compatibility ([0ca6914](https://github.com/fpouyez/AdrUtilities/commit/0ca69141f26c4663a3febbe570e859494b08ef7d))
+
 ## [1.4.4](https://github.com/fpouyez/AdrUtilities/compare/v1.4.3...v1.4.4) (2025-07-04)
 
 
