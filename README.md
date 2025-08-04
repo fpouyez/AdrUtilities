@@ -1,142 +1,157 @@
-<h1 align="center" style="border-bottom: none;">ADR Utilities</h1>
-<h3 align="center">Toolset for create and manage your ADRs</h3>
-<p align="center">
-  <a href="https://github.com/fpouyez/AdrUtilities/actions/workflows/ci.yml">
-    <img alt="Build states" src="https://github.com/fpouyez/AdrUtilities/actions/workflows/release.yml/badge.svg">
-  </a>
-  <a href="https://securityscorecards.dev/viewer/?uri=github.com/fpouyez/AdrUtilities">
-    <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/fpouyez/AdrUtilities/badge">
-  </a>
-  <a href="#badge">
-    <img alt="adr-utilities:typescript" src="https://img.shields.io/badge/adr--utilities-typescript-0038e0?logo=adr-utilities">
-  </a>
-</p>
+<h1 align="center">ADR Utilities</h1>
 
-ADR Utilities is a toolset for create and manage your Architecture Decision Records.
+<div align="center">
 
-Why another extension ? Because it manages multiple ADR directories (which is essential in huge projects / mono-repository projects / multiple libraries projects) and follows its own rules for naming and managing content.
+![Build Status](https://github.com/fpouyez/AdrUtilities/actions/workflows/release.yml/badge.svg)
+![Security Scorecard](https://api.securityscorecards.dev/projects/github.com/fpouyez/AdrUtilities/badge)
+![TypeScript](https://img.shields.io/badge/adr--utilities-typescript-0038e0?logo=adr-utilities)
 
-## 🔒 Security
+**Complete toolset for creating and managing your Architecture Decision Records (ADR)**
 
-This extension implements robust security measures to protect against:
+</div>
 
-- **Path injection**: Strict validation of file paths
-- **Regular expression injection**: Automatic escaping of special characters
-- **Denial of service attacks**: Limitation of the number of files and matches
-- **Input validation**: Sanitization and validation of all user inputs
+## 🚀 Main Features
 
-See [SECURITY.md](./SECURITY.md) for more details about security measures.
+### ✨ Simplified ADR Creation
+- **Right-click** in explorer or **command palette**
+- **Automatic detection** of ADR directories
+- **Customizable templates** (French, English, MADR)
+- **Smart naming** with timestamp
 
-## 📋 Conventions
+### 🔗 Navigation with CodeLens
+- **Clickable links** to your ADRs in code
+- **Automatic detection** of ADR references
+- **Visual indicators** for non-found ADRs
 
-This extension manipulates ADR files by a naming conventions, which follows this pattern :
-```{prefix}{shortTitle}_{timestamp}.md```
+### 📋 Template Preview
+- **Preview** before creation
+- **Standard and custom** templates
+- **Complete MADR 4.0.0** support
 
-- *prefix* : Identifies ADR among all your markdown files. See [the adrFilePrefix config](#adrfileprefix).
-- *shortTitle* : Subject of your ADR. Ex : 'WhyWeUseAPatternForADR'.
-- *timestamp* : A way to avoid collision among your ADRs. More convenient than an integer.
+## 🎯 Why this extension?
 
-So by default :
-```adr_WhyWeUseAPatternForADR_20230225.md```
+This extension manages **multiple ADR directories** simultaneously, essential for:
+- **Complex projects** and monorepos
+- **Multiple libraries**
+- **Distributed teams**
 
-## ✨ Features
+It follows its own naming and content management rules.
+
+## 📦 Installation
+
+1. Open VS Code
+2. Go to Extensions tab (Ctrl+Shift+X)
+3. Search for "ADR Utilities"
+4. Click Install
+
+**Requirements:** VS Code 1.101.0 or newer
+
+## 🛠️ Quick Usage
 
 ### Create an ADR
 
-Right-click on the explorer (Create an ADR) or launch it with the command palette (ADR Create).
+#### Right-click Method
+1. **Right-click** in explorer → "Create an ADR"
+2. Choose location
+3. Enter your ADR name
+4. File is created with selected template
 
-In the explorer, a new file is created into the current directory if its name matches the ADR directory name. If not, the command searches for an ADR directory in the first child directories. Otherwise, an ADR directory is created.
+#### Command Palette Method
+1. **Ctrl+Shift+P** → "ADR Create"
+2. Select directory from the chooser
+3. Enter your ADR name
+4. File is created with selected template
 
-With the Palette, a directory choosing box is displayed to select an ADR location.
+#### ADR Directory Management
+The extension intelligently manages ADR directories:
 
-In all cases, you must complete the ADR file name by an input box.
+- **Current directory**: If the current directory name matches the ADR directory name, the ADR is created there
+- **Child directories**: If not found in current directory, it searches for an ADR directory in first-level child directories
+- **Auto-creation**: If no ADR directory is found, one is automatically created
 
-Finally, the ADR file is filled with a template.
+This ensures your ADRs are always organized in the correct location, even in complex project structures with multiple ADR directories.
 
-### Navigate with CodeLens
+### Navigate to an ADR
+- ADR references in your code become **clickable**
+- Click on the CodeLens link to open the ADR
 
-Each mention of ADR in a text editor (which matches the naming pattern) enables a codelens link to navigate to this ADR.
+### Preview a template
+- **Ctrl+Shift+P** → "ADR Template Preview"
+- View template content before creation
 
-If the name doesn't match a real ADR, the CodeLens annotation marks it as not navigable.
+## ⚙️ Configuration
 
-### Preview ADR Template
+### Main Settings
 
-Use the command palette (ADR Template Preview) to preview the content of the currently selected ADR template before creating a new ADR. This helps you understand the structure and content that will be used for your new ADR file.
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `adrDirectoryName` | Name of ADR directories | `adr` |
+| `adrFilePrefix` | Prefix for ADR files | `adr` |
+| `enableCodeLensNavigation` | Enable CodeLens navigation | `true` |
+| `currentTemplate` | Default template | `defaultTemplateFrench` |
 
-## 📋 Requirements
+### Available Templates
 
-vscode : 1.92.0 or more
+- **`defaultTemplateFrench`** : Custom template in French
+- **`defaultTemplateEnglish`** : Custom template in English  
+- **`madrTemplateEnglish`** : MADR 4.0.0 template in English
+- **`madrTemplateFrench`** : MADR 4.0.0 template in French
 
-## ⚙️ Extension Settings
+### Custom Template
 
-### adrDirectoryName
+Use `customTemplatePath` to define your own template:
+```json
+{
+  "adr-utilities.customTemplatePath": "/path/to/your/template.md"
+}
+```
 
-To change the name of ADR folders used by this extension.
+## 📋 Naming Conventions
 
-Default : *'adr'*.
+ADR files follow the pattern: `{prefix}{shortTitle}_{timestamp}.md`
 
-### adrFilePrefix
+**Example:** `adr_WhyWeUseAPatternForADR_20230225.md`
 
-Prefix use in ADR filename, to differenciate ADR files from other MD files.
+- **prefix**: Identifies ADRs among your markdown files
+- **shortTitle**: Subject of your ADR (e.g., 'WhyWeUseAPatternForADR')
+- **timestamp**: Avoids collisions (more convenient than an integer)
 
-Default : *'adr'*.
+## 🔒 Security
 
-### enableCodeLensNavigation
+This extension implements robust security measures:
 
-Enable CodeLens navigation to ADRs. When set to true, CodeLens will be active immediately and will show clickable links above ADR references in your code. The CodeLens provider is registered for all file types (`*`) to transform ADR references into clickable links.
+- ✅ **Path injection protection**: Strict validation
+- ✅ **Regex injection protection**: Automatic escaping
+- ✅ **DoS attack protection**: Resource limitation
+- ✅ **Input validation**: Complete sanitization
 
-Default : *true*.
+📖 [Complete details](./SECURITY.md)
 
-**Note**: You can manually enable/disable CodeLens using the command palette commands "ADR Navigation Enable" and "ADR Navigation Disable".
+## ⚡ Performance Optimizations
 
-### currentTemplate
+- **Automatic activation** for immediate CodeLens
+- **Smart caching** of CodeLens results
+- **Early exit** to avoid unnecessary processing
+- **Multi-file support** for all file types
 
-Template used to fill the created ADR.
+### Optimization Tips
 
-Possible values :
-
-- *'defaultTemplateFrench'* : a custom template created to fill our needs, in French.
-- *'defaultTemplateEnglish'* : the same custom template, in English.
-- *'madrTemplateEnglish'* : standard MADR (Markdown Architecture Decision Records) template with YAML frontmatter, in English.
-- *'madrTemplateFrench'* : standard MADR (Markdown Architecture Decision Records) template with YAML frontmatter, in French.
-
-Default : *defaultTemplateFrench*.
-
-**If you select an unknown template name, a warning message will be displayed and the default French template will be used as a fallback.**
-
-**MADR templates** follow the [MADR 4.0.0 specification](https://adr.github.io/madr/), with YAML metadata and a standardized structure. The French version is a faithful translation of the English MADR template, allowing you to document your architectural decisions in your preferred language while remaining compatible with industry standards.
-
-### customTemplatePath
-
-If you want to use your own ADR template, you can provide a file path in the `customTemplatePath` setting. If this field is set and not empty, the content of the file will be used as the template for new ADRs, regardless of the value of `currentTemplate`.
-
-- **How to use:**
-  - Set the full path to your custom template file in the `customTemplatePath` setting (absolute or relative to your workspace).
-  - The file content will be used as-is for every new ADR you create.
-- **Fallback:**
-  - If the file cannot be read, a warning message will be displayed in English and the default French template will be used as a fallback.
-
-This allows you to fully customize the structure and content of your ADRs to fit your team's needs.
-
-## 🚀 Performance Optimizations
-
-This extension has been optimized for better performance:
-
-- **Automatic Activation**: The extension activates automatically on startup to provide immediate CodeLens functionality
-- **Smart Caching**: CodeLens results are cached to avoid recalculation
-- **Early Exit**: Quick checks prevent unnecessary processing of files without ADR references
-- **Cross-file Support**: CodeLens work on all file types to transform comments into ADR links
-
-To maximize performance:
-
-1. Set `enableCodeLensNavigation` to `false` if you don't need CodeLens functionality
-2. Use the command `ADR Navigation Enable` when you need CodeLens functionality
-3. The extension will automatically optimize processing based on your usage patterns
+1. Disable `enableCodeLensNavigation` if you don't need it
+2. Use "ADR Navigation Enable/Disable" commands as needed
+3. Extension automatically optimizes based on your usage patterns
 
 ## 🐛 Known Issues
 
-None
+No known issues currently.
 
 ## 📝 Release Notes
 
-See [Changelog](./CHANGELOG.md)
+See [Changelog](./CHANGELOG.md) for version details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Check the [project ADRs](./doc/adrs/) to understand architectural decisions.
+
+## 📄 License
+
+This project is under MIT license. See [LICENSE](./LICENSE) file for details.

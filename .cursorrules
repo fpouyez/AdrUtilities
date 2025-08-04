@@ -95,3 +95,15 @@ import * as vscode from 'vscode';
 - Les tests doivent couvrir les cas nominaux, les cas limites et les régressions potentielles.
 - Les tests TDD sont à conserver dans le projet et servent de documentation vivante du comportement attendu.
 - Toute refactorisation majeure doit être précédée ou accompagnée de tests pour garantir la non-régression.
+
+## Documentation README
+
+- **Structure logique** : Fonctionnalités → Pourquoi → Installation → Utilisation → Configuration
+- **Titre principal centré** avec HTML : `<h1 align="center">Titre</h1>`
+- **Version VS Code** synchronisée avec package.json (actuellement `^1.101.0`)
+- **Hiérarchie visuelle** avec emojis et sections bien définies
+- **Contenu essentiel en premier** pour une lecture facilitée
+- **Configuration simplifiée** avec tableaux et exemples concrets
+- **Explication détaillée** de la gestion des répertoires ADR dans la section création
+- **Cohérence** entre README et configuration technique
+- **Mise à jour automatique** du README pour les nouveautés
