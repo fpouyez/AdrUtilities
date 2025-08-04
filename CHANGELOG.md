@@ -1,3 +1,11 @@
+## [1.4.6](https://github.com/fpouyez/AdrUtilities/compare/v1.4.5...v1.4.6) (2025-08-04)
+
+
+### Bug Fixes
+
+* update @octokit/request to latest version to resolve deprecated API warning ([6609501](https://github.com/fpouyez/AdrUtilities/commit/66095015feaeae546bfa39798053f6dcee01df12))
+* update engines.vscode to ^1.101.0 to match @types/vscode version ([37d2e1a](https://github.com/fpouyez/AdrUtilities/commit/37d2e1af5bd75ec956f662ecf2092062e7d47b62))
+
 ## [1.4.5](https://github.com/fpouyez/AdrUtilities/compare/v1.4.4...v1.4.5) (2025-08-04)
 
 
