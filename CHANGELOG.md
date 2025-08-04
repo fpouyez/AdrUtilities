@@ -1,3 +1,10 @@
+## [1.4.7](https://github.com/fpouyez/AdrUtilities/compare/v1.4.6...v1.4.7) (2025-08-04)
+
+
+### Bug Fixes
+
+* force new release version ([07f6e41](https://github.com/fpouyez/AdrUtilities/commit/07f6e41589fb3a662cdd9d0924a49c7533a51f75))
+
 ## [1.4.6](https://github.com/fpouyez/AdrUtilities/compare/v1.4.5...v1.4.6) (2025-08-04)
 
 
