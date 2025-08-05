@@ -15,6 +15,7 @@
 ### ✨ Simplified ADR Creation
 - **Right-click** in explorer or **command palette**
 - **Automatic detection** of ADR directories
+- **Flexible organization** (subdirectory or current directory)
 - **Customizable templates** (French, English, MADR)
 - **Smart naming** with timestamp
 
@@ -30,12 +31,13 @@
 
 ## 🎯 Why this extension?
 
-This extension manages **multiple ADR directories** simultaneously, essential for:
+This extension manages **multiple ADR directories** simultaneously with flexible organization, essential for:
 - **Complex projects** and monorepos
 - **Multiple libraries**
 - **Distributed teams**
+- **Different organizational preferences**
 
-It follows its own naming and content management rules.
+It follows its own naming and content management rules while adapting to your project structure.
 
 ## 📦 Installation
 
@@ -63,13 +65,18 @@ It follows its own naming and content management rules.
 4. File is created with selected template
 
 #### ADR Directory Management
-The extension intelligently manages ADR directories:
+The extension intelligently manages ADR directories with flexible organization options:
 
 - **Current directory**: If the current directory name matches the ADR directory name, the ADR is created there
 - **Child directories**: If not found in current directory, it searches for an ADR directory in first-level child directories
-- **Auto-creation**: If no ADR directory is found, one is automatically created
+- **Auto-creation**: If no ADR directory is found, one is automatically created (configurable)
 
-This ensures your ADRs are always organized in the correct location, even in complex project structures with multiple ADR directories.
+**Flexible Organization:**
+- **Subdirectory mode** (default): Creates ADRs in a dedicated `adr/` subdirectory
+- **Current directory mode**: Creates ADRs directly in the selected directory
+- **Custom directory names**: Use your own directory names (e.g., `decisions/`, `architecture/`)
+
+This ensures your ADRs are always organized according to your preferences, even in complex project structures with multiple ADR directories.
 
 ### Navigate to an ADR
 - ADR references in your code become **clickable**
@@ -87,6 +94,7 @@ This ensures your ADRs are always organized in the correct location, even in com
 |---------|-------------|---------|
 | `adrDirectoryName` | Name of ADR directories | `adr` |
 | `adrFilePrefix` | Prefix for ADR files | `adr` |
+| `autoCreateFolder` | Automatically create ADR subdirectory | `true` |
 | `enableCodeLensNavigation` | Enable CodeLens navigation | `true` |
 | `currentTemplate` | Default template | `defaultTemplateFrench` |
 
@@ -96,6 +104,45 @@ This ensures your ADRs are always organized in the correct location, even in com
 - **`defaultTemplateEnglish`** : Custom template in English  
 - **`madrTemplateEnglish`** : MADR 4.0.0 template in English
 - **`madrTemplateFrench`** : MADR 4.0.0 template in French
+
+### Directory Organization
+
+Control how ADR directories are created:
+
+```json
+{
+  "adr-utilities.autoCreateFolder": true,    // Create subdirectory (default)
+  "adr-utilities.adrDirectoryName": "adr"    // Custom directory name
+}
+```
+
+**Organization Modes:**
+- **`autoCreateFolder: true`** (default): Creates ADRs in `adr/` subdirectory
+- **`autoCreateFolder: false`**: Creates ADRs directly in the selected directory
+- **Custom names**: Use `adrDirectoryName` to specify custom directory names
+
+**Examples:**
+```bash
+# Subdirectory mode (default)
+project/
+├── src/
+├── docs/
+└── adr/
+    └── adr_MyDecision_20250127.md
+
+# Current directory mode
+project/
+├── src/
+├── docs/
+└── adr_MyDecision_20250127.md
+
+# Custom directory name
+project/
+├── src/
+├── docs/
+└── decisions/
+    └── adr_MyDecision_20250127.md
+```
 
 ### Custom Template
 
