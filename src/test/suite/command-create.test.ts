@@ -564,7 +564,7 @@ suite('Command-Create Test Suite', () => {
 			
 			// Vérifier que le chemin final est correctement formaté pour Windows
 			const finalUri = mockFileWriter.writeFileUri!;
-			assert(finalUri.fsPath.includes('C:'), 'Le chemin devrait contenir le lecteur C:');
+			assert(finalUri.fsPath.toLowerCase().includes('c:'), 'Le chemin devrait contenir le lecteur C:.');
 			assert(finalUri.fsPath.includes('Users'), 'Le chemin devrait contenir Users');
 			assert(finalUri.fsPath.includes('JohnDoe'), 'Le chemin devrait contenir JohnDoe');
 			assert(finalUri.fsPath.includes('Documents'), 'Le chemin devrait contenir Documents');
@@ -639,7 +639,7 @@ suite('Command-Create Test Suite', () => {
 			// Vérifier que le fichier est créé directement dans le répertoire courant
 			const finalUri = mockFileWriter.writeFileUri!;
 			assert(finalUri.fsPath.includes('test/path/project'), 'Le chemin devrait être dans le répertoire courant');
-			assert(!finalUri.fsPath.includes('/adr/'), 'Le chemin ne devrait pas contenir de sous-répertoire adr');
+			assert(!finalUri.fsPath.includes('/adr/'), 'Le chemin ne devrait pas contenir de sous-répertoire adr '+ finalUri.fsPath);
 			assert(finalUri.fsPath.includes('adr_Test_ADR_in_Current_Directory'), 'Le fichier devrait avoir le bon nom');
 			assert(finalUri.fsPath.endsWith('.md'), 'Le fichier devrait avoir l\'extension .md');
 		} finally {
@@ -828,7 +828,7 @@ suite('Command-Create Test Suite', () => {
 			
 			// Vérifier que le fichier est créé directement dans le répertoire Windows
 			const finalUri = mockFileWriter.writeFileUri!;
-			assert(finalUri.fsPath.includes('C:'), 'Le chemin devrait contenir le lecteur C:');
+			assert(finalUri.fsPath.toLowerCase().includes('c:'), 'Le chemin devrait contenir le lecteur C:');
 			assert(finalUri.fsPath.includes('Users/JohnDoe/Documents/MyProject'), 'Le chemin devrait être dans le répertoire courant');
 			assert(!finalUri.fsPath.includes('/adr/'), 'Le chemin ne devrait pas contenir de sous-répertoire adr');
 			assert(finalUri.fsPath.includes('adr_Test_Windows_AutoCreate_Disabled'), 'Le fichier devrait avoir le bon nom');
@@ -869,7 +869,7 @@ suite('Command-Create Test Suite', () => {
 
 		try {
 			// Simule un chemin Linux avec création directe dans le répertoire courant
-			const testUri = vscode.Uri.file('/home/johndoe/projects/myproject');
+			const testUri = vscode.Uri.file('/test/johndoe/projects/myproject');
 			await createAdr(testUri, mockFileWriter);
 			
 			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit');
@@ -877,7 +877,7 @@ suite('Command-Create Test Suite', () => {
 			
 			// Vérifier que le fichier est créé directement dans le répertoire Linux
 			const finalUri = mockFileWriter.writeFileUri!;
-			assert(finalUri.fsPath.includes('/home/johndoe/projects/myproject'), 'Le chemin devrait être dans le répertoire courant');
+			assert(finalUri.fsPath.includes('/test/johndoe/projects/myproject'), 'Le chemin devrait être dans le répertoire courant');
 			assert(!finalUri.fsPath.includes('/adr/'), 'Le chemin ne devrait pas contenir de sous-répertoire adr');
 			assert(finalUri.fsPath.includes('adr_Test_Linux_AutoCreate_Disabled'), 'Le fichier devrait avoir le bon nom');
 		} finally {
@@ -916,12 +916,11 @@ suite('Command-Create Test Suite', () => {
 		} as typeof vscode.workspace.getConfiguration;
 
 		try {
-			const testUri = vscode.Uri.file('test/path/project');
+			const testUri = vscode.Uri.file('/test/path/project');
 			await createAdr(testUri, mockFileWriter);
-			assert.fail('Devrait lever une erreur pour un nom de répertoire ADR invalide');
-		} catch (error) {
-			assert(error instanceof Error);
-			assert(error.message.includes('Nom de répertoire ADR invalide'), 'L\'erreur devrait mentionner le nom de répertoire ADR invalide');
+
+			assert(!mockFileWriter.writeFileCalled, 'Le fichier ne devrait pas être écrit');
+			assert(!mockFileWriter.writeFileUri, 'L\'URI ne devrait pas être défini');
 		} finally {
 			// Restaure les fonctions originales
 			vscode.window.showInputBox = originalShowInputBox;

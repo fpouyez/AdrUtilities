@@ -96,15 +96,18 @@ export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VS
 		console.log("LastDirName : "+ (lastDirName ? lastDirName : "rien"));
 
 		const config = vscode.workspace.getConfiguration("adrutilities");
+		const autoCreateFolder = config.get("autoCreateFolder") as boolean;
 		const adrDirectoryName = config.get("adrDirectoryName") as string;
 
-		// Validation du nom de répertoire ADR
-		if (!SecurityValidator.validateAdrDirectoryName(adrDirectoryName)) {
-			throw new Error('Nom de répertoire ADR invalide dans la configuration');
-		}
+		if(autoCreateFolder){
+			// Validation du nom de répertoire ADR
+			if (!SecurityValidator.validateAdrDirectoryName(adrDirectoryName)) {
+				throw new Error('Nom de répertoire ADR invalide dans la configuration');
+			}
 
-		if (lastDirName !== adrDirectoryName) {
-			segments.push(adrDirectoryName);
+			if (lastDirName !== adrDirectoryName) {
+				segments.push(adrDirectoryName);
+			}
 		}
 
 		// Construction correcte de l'URI pour la compatibilité multiplateforme
