@@ -107,11 +107,9 @@ export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VS
 			segments.push(adrDirectoryName);
 		}
 
-		uri = vscode.Uri.parse(
-			segments.reduce((acc, segment) => {
-				return acc + segment + separator;
-			})
-		);
+		// Construction correcte de l'URI pour la compatibilité multiplateforme
+		const pathString = segments.join(separator);
+		uri = vscode.Uri.file(pathString);
 
 		if (!!uri) {
 			console.log("Create in directory : "+uri);

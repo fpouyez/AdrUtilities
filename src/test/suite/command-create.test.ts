@@ -437,4 +437,198 @@ suite('Command-Create Test Suite', () => {
 			assert(error instanceof Error);
 		}
 	});
+
+	test('Should handle Windows paths correctly', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Windows Path');
+		} as typeof vscode.window.showInputBox;
+
+		// Mock de la configuration
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function() {
+			return {
+				get: function(key: string, defaultValue?: unknown) {
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as vscode.WorkspaceConfiguration;
+		} as typeof vscode.workspace.getConfiguration;
+
+		try {
+			// Test avec un chemin Windows simulé
+			const testUri = vscode.Uri.file('C:/Users/Test/Project');
+			await createAdr(testUri, mockFileWriter);
+			
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit même avec un chemin Windows');
+			assert(mockFileWriter.writeFileUri, 'L\'URI devrait être correctement construit');
+			
+			// Vérifier que l'URI final est valide
+			const finalUri = mockFileWriter.writeFileUri!;
+			assert(finalUri.scheme === 'file', 'L\'URI devrait avoir le schéma file');
+			assert(finalUri.fsPath.includes('adr'), 'Le chemin devrait contenir le répertoire adr');
+			assert(finalUri.fsPath.endsWith('.md'), 'Le fichier devrait avoir l\'extension .md');
+		} finally {
+			// Restaure les fonctions originales
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
+
+	test('Should handle Windows paths with backslashes correctly', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Windows Backslash Path');
+		} as typeof vscode.window.showInputBox;
+
+		// Mock de la configuration
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function() {
+			return {
+				get: function(key: string, defaultValue?: unknown) {
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as vscode.WorkspaceConfiguration;
+		} as typeof vscode.workspace.getConfiguration;
+
+		try {
+			// Test avec un chemin Windows avec backslashes
+			const testUri = vscode.Uri.file('C:\\Users\\Test\\Project');
+			await createAdr(testUri, mockFileWriter);
+			
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit même avec des backslashes');
+			assert(mockFileWriter.writeFileUri, 'L\'URI devrait être correctement construit');
+			
+			// Vérifier que l'URI final est valide
+			const finalUri = mockFileWriter.writeFileUri!;
+			assert(finalUri.scheme === 'file', 'L\'URI devrait avoir le schéma file');
+			assert(finalUri.fsPath.includes('adr'), 'Le chemin devrait contenir le répertoire adr');
+			assert(finalUri.fsPath.endsWith('.md'), 'Le fichier devrait avoir l\'extension .md');
+		} finally {
+			// Restaure les fonctions originales
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
+
+	test('Should handle real Windows user scenario', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Real Windows User');
+		} as typeof vscode.window.showInputBox;
+
+		// Mock de la configuration
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function() {
+			return {
+				get: function(key: string, defaultValue?: unknown) {
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as vscode.WorkspaceConfiguration;
+		} as typeof vscode.workspace.getConfiguration;
+
+		try {
+			// Test avec un chemin Windows typique d'un utilisateur réel
+			const testUri = vscode.Uri.file('C:\\Users\\JohnDoe\\Documents\\MyProject');
+			await createAdr(testUri, mockFileWriter);
+			
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit pour un utilisateur Windows réel');
+			assert(mockFileWriter.writeFileUri, 'L\'URI devrait être correctement construit');
+			
+			// Vérifier que l'URI final est valide et contient le bon chemin
+			const finalUri = mockFileWriter.writeFileUri!;
+			assert(finalUri.scheme === 'file', 'L\'URI devrait avoir le schéma file');
+			assert(finalUri.fsPath.includes('adr'), 'Le chemin devrait contenir le répertoire adr');
+			assert(finalUri.fsPath.endsWith('.md'), 'Le fichier devrait avoir l\'extension .md');
+			assert(finalUri.fsPath.includes('MyProject'), 'Le chemin devrait contenir le nom du projet');
+			
+			// Vérifier que le chemin final est correctement formaté pour Windows
+			// Le chemin peut utiliser des slashes ou des backslashes selon la plateforme
+			assert(finalUri.fsPath.includes('C:'), 'Le chemin devrait contenir le lecteur C:');
+			assert(finalUri.fsPath.includes('Users'), 'Le chemin devrait contenir Users');
+			assert(finalUri.fsPath.includes('JohnDoe'), 'Le chemin devrait contenir JohnDoe');
+			assert(finalUri.fsPath.includes('Documents'), 'Le chemin devrait contenir Documents');
+			assert(finalUri.fsPath.includes('MyProject'), 'Le chemin devrait contenir MyProject');
+			assert(finalUri.fsPath.includes('adr'), 'Le chemin devrait contenir le répertoire adr');
+			assert(finalUri.fsPath.includes('adr_Test_Real_Windows_User_'), 'Le chemin devrait contenir le préfixe du fichier');
+			assert(finalUri.fsPath.endsWith('.md'), 'Le fichier devrait avoir l\'extension .md');
+		} finally {
+			// Restaure les fonctions originales
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
+
+	test('Should handle Linux paths correctly', async () => {
+		const mockFileWriter = new MockFileWriter();
+		
+		// Mock de showInputBox pour retourner un titre valide
+		const originalShowInputBox = vscode.window.showInputBox;
+		vscode.window.showInputBox = function() {
+			return Promise.resolve('Test Linux Path');
+		} as typeof vscode.window.showInputBox;
+
+		// Mock de la configuration
+		const originalGetConfiguration = vscode.workspace.getConfiguration;
+		vscode.workspace.getConfiguration = function() {
+			return {
+				get: function(key: string, defaultValue?: unknown) {
+					if (key === 'adrFilePrefix') {
+						return 'adr_';
+					}
+					if (key === 'adrDirectoryName') {
+						return 'adr';
+					}
+					return defaultValue;
+				}
+			} as vscode.WorkspaceConfiguration;
+		} as typeof vscode.workspace.getConfiguration;
+
+		try {
+			// Test avec un chemin Linux simulé
+			const testUri = vscode.Uri.file('/home/johndoe/projects/myproject');
+			await createAdr(testUri, mockFileWriter);
+			
+			assert(mockFileWriter.writeFileCalled, 'Le fichier devrait être écrit même avec un chemin Linux');
+			assert(mockFileWriter.writeFileUri, 'L\'URI devrait être correctement construit');
+			
+			// Vérifier que l'URI final est valide
+			const finalUri = mockFileWriter.writeFileUri!;
+			assert(finalUri.scheme === 'file', 'L\'URI devrait avoir le schéma file');
+			assert(finalUri.fsPath.includes('adr'), 'Le chemin devrait contenir le répertoire adr');
+			assert(finalUri.fsPath.endsWith('.md'), 'Le fichier devrait avoir l\'extension .md');
+			assert(finalUri.fsPath.includes('myproject'), 'Le chemin devrait contenir le nom du projet');
+			assert(finalUri.fsPath.includes('Test_Linux_Path'), 'Le chemin devrait contenir le titre de l\'ADR');
+		} finally {
+			// Restaure les fonctions originales
+			vscode.window.showInputBox = originalShowInputBox;
+			vscode.workspace.getConfiguration = originalGetConfiguration;
+		}
+	});
 }); 

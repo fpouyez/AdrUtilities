@@ -108,10 +108,9 @@ export class SecurityValidator {
                    normalizedPath.startsWith('/some/') ||
                    normalizedPath.startsWith('test/') ||
                    normalizedPath.startsWith('some/') ||
-                   // Accepte les chemins Windows de test
-                   normalizedPath.startsWith('C:/') ||
-                   normalizedPath.startsWith('D:/') ||
-                   normalizedPath.startsWith('E:/') ||
+                   // Accepte les chemins Windows de test (avec slashes ou backslashes)
+                   !!normalizedPath.match(/^[A-Z]:\//) ||
+                   !!normalizedPath.match(/^[A-Z]:\\/) ||
                    // Accepte les chemins relatifs simples
                    !path.isAbsolute(normalizedPath);
         }
@@ -119,7 +118,8 @@ export class SecurityValidator {
         // Vérifie que le chemin est dans l'espace de travail
         for (const folder of workspaceFolders) {
             const folderPath = this.normalizePath(folder.uri.fsPath);
-            if (normalizedPath.startsWith(folderPath)) {
+            // Comparaison insensible à la casse pour Windows
+            if (normalizedPath.toLowerCase().startsWith(folderPath.toLowerCase())) {
                 return true;
             }
         }
