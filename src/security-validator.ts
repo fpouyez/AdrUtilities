@@ -88,7 +88,7 @@ export class SecurityValidator {
         }
         
         // Normalise le chemin en convertissant les séparateurs Windows
-        const normalizedPath = this.normalizePath(filePath);
+        const normalizedPath = this.normalizePath(filePath).toLowerCase();
         
         // Rejette les chemins avec des séquences malveillantes
         if (normalizedPath.includes('..') || 
@@ -118,8 +118,8 @@ export class SecurityValidator {
                    normalizedPath.startsWith('test/') ||
                    normalizedPath.startsWith('some/') ||
                    // Accepte les chemins Windows de test (avec slashes ou backslashes)
-                   !!normalizedPath.match(/^[A-Z]:\//) ||
-                   !!normalizedPath.match(/^[A-Z]:\\/) ||
+                   !!normalizedPath.match(/^[A-Z]:\//i) ||
+                   !!normalizedPath.match(/^[A-Z]:\\/i) ||
                    // Accepte les chemins relatifs simples
                    !path.isAbsolute(normalizedPath);
         }
