@@ -59,8 +59,17 @@ export class SecurityValidator {
      * @returns Le chemin normalisé
      */
     private static normalizePath(filePath: string): string {
-        // Convertit les backslashes en slashes pour une validation cohérente
-        return filePath.replace(/\\/g, '/');
+        let norm = path.normalize(filePath);
+
+        // Remplace tous les backslashes par des slashes
+        norm = norm.replace(/\\/g, '/');
+
+        // Sur Windows : met la lettre de lecteur en minuscule pour uniformiser (ex : 'C:/...' => 'c:/...')
+        if (/^[A-Z]:\//i.test(norm)) {
+            norm = norm[0].toLowerCase() + norm.slice(1);
+        }
+
+        return norm;
     }
     
     /**
@@ -79,7 +88,7 @@ export class SecurityValidator {
         }
         
         // Normalise le chemin en convertissant les séparateurs Windows
-        const normalizedPath = this.normalizePath(filePath);
+        const normalizedPath = this.normalizePath(filePath).toLowerCase();
         
         // Rejette les chemins avec des séquences malveillantes
         if (normalizedPath.includes('..') || 
@@ -109,8 +118,8 @@ export class SecurityValidator {
                    normalizedPath.startsWith('test/') ||
                    normalizedPath.startsWith('some/') ||
                    // Accepte les chemins Windows de test (avec slashes ou backslashes)
-                   !!normalizedPath.match(/^[A-Z]:\//) ||
-                   !!normalizedPath.match(/^[A-Z]:\\/) ||
+                   !!normalizedPath.match(/^[A-Z]:\//i) ||
+                   !!normalizedPath.match(/^[A-Z]:\\/i) ||
                    // Accepte les chemins relatifs simples
                    !path.isAbsolute(normalizedPath);
         }

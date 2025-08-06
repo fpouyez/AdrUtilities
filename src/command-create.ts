@@ -69,7 +69,7 @@ const askForTitle = async () => {
 
 export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VSCodeFileWriter()): Promise<void> {
 	try {
-		console.log("Create initial dir : "+uri);
+		console.log("Create initial dir : "+uri.fsPath);
 		if (!uri) {
 			const parentDirectory = vscode.window.showOpenDialog({
 				canSelectFiles: false,
@@ -87,6 +87,7 @@ export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VS
 
 		// Validation du chemin URI
 		if (!SecurityValidator.validateFilePath(uri.fsPath)) {
+			console.log("Ne passe pas la validation. FilePath = "+uri.fsPath);
 			throw new Error('Chemin de répertoire invalide ou en dehors de l\'espace de travail');
 		}
 
@@ -115,7 +116,7 @@ export async function createAdr(uri: vscode.Uri, fileWriter: FileWriter = new VS
 		uri = vscode.Uri.file(pathString);
 
 		if (!!uri) {
-			console.log("Create in directory : "+uri);
+			console.log("Create in directory : "+uri.fsPath);
 			const adrTitle = await askForTitle();
 			if (!!adrTitle) {
 				const today = concatDate();
