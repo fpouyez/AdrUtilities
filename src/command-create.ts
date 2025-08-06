@@ -4,7 +4,6 @@ import { convertSeparators, convertSeparatorsOnUri, separator, findLastDirectory
 import { SecurityValidator } from "./security-validator";
 
 import { pickTemplate } from './template-selector';
-import { Console } from "console";
 
 const padZero = (num: number, pad: number) => num.toString().padStart(pad, "0");
 
