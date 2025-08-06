@@ -59,8 +59,17 @@ export class SecurityValidator {
      * @returns Le chemin normalisé
      */
     private static normalizePath(filePath: string): string {
-        // Convertit les backslashes en slashes pour une validation cohérente
-        return filePath.replace(/\\/g, '/');
+        let norm = path.normalize(filePath);
+
+        // Remplace tous les backslashes par des slashes
+        norm = norm.replace(/\\/g, '/');
+
+        // Sur Windows : met la lettre de lecteur en minuscule pour uniformiser (ex : 'C:/...' => 'c:/...')
+        if (/^[A-Z]:\//i.test(norm)) {
+            norm = norm[0].toLowerCase() + norm.slice(1);
+        }
+
+        return norm;
     }
     
     /**
