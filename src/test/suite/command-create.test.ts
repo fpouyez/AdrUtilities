@@ -638,9 +638,9 @@ suite('Command-Create Test Suite', () => {
 			
 			// Vérifier que le fichier est créé directement dans le répertoire courant
 			const finalUri = mockFileWriter.writeFileUri!;
-			assert(finalUri.fsPath.includes('test/path/project'), 'Le chemin devrait être dans le répertoire courant');
-			assert(!finalUri.fsPath.includes('/adr/'), 'Le chemin ne devrait pas contenir de sous-répertoire adr '+ finalUri.fsPath);
-			assert(finalUri.fsPath.includes('adr_Test_ADR_in_Current_Directory'), 'Le fichier devrait avoir le bon nom');
+			assert(finalUri.fsPath.includes('test/path/project'), 'Le chemin devrait être dans le répertoire courant :'+ finalUri.fsPath);
+			assert(!finalUri.fsPath.includes('/adr/'), 'Le chemin ne devrait pas contenir de sous-répertoire adr :'+ finalUri.fsPath);
+			assert(finalUri.fsPath.includes('adr_Test_ADR_in_Current_Directory'), 'Le fichier devrait avoir le bon nom. Obtenu :'+ finalUri.fsPath);
 			assert(finalUri.fsPath.endsWith('.md'), 'Le fichier devrait avoir l\'extension .md');
 		} finally {
 			// Restaure les fonctions originales
@@ -733,7 +733,7 @@ suite('Command-Create Test Suite', () => {
 			
 			// Vérifier que le fichier est créé dans le sous-répertoire adr
 			const finalUri = mockFileWriter.writeFileUri!;
-			assert(finalUri.fsPath.includes('test/path/project/adr'), 'Le chemin devrait être dans le sous-répertoire adr');
+			assert(finalUri.fsPath.includes('test/path/project/adr'), 'Le chemin devrait être dans le sous-répertoire adr :'+ finalUri.fsPath);
 			assert(finalUri.fsPath.includes('adr_Test_ADR_with_AutoCreate_Enabled'), 'Le fichier devrait avoir le bon nom');
 		} finally {
 			// Restaure les fonctions originales
