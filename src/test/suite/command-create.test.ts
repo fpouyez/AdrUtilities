@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { createAdr, FileWriter } from '../../command-create';
 import { SecurityValidator } from '../../security-validator';
+import * as path from 'path';
 
 /**
  * Mock FileWriter pour les tests
@@ -15,14 +16,30 @@ class MockFileWriter implements FileWriter {
 
 	async writeFile(uri: vscode.Uri, content: Buffer): Promise<void> {
 		this.writeFileCalled = true;
-		this.writeFileUri = uri;
+		this.writeFileUri = vscode.Uri.file(this.normalizePath(uri.fsPath));
 		this.writeFileContent = content;
 		
 		if (this.shouldThrowError) {
 			throw new Error(this.errorMessage);
 		}
 	}
+
+	private normalizePath(filePath: string): string {
+		let norm = path.normalize(filePath);
+
+		// Remplace tous les backslashes par des slashes
+		norm = norm.replace(/\\/g, '/');
+
+		// Sur Windows : met la lettre de lecteur en minuscule pour uniformiser (ex : 'C:/...' => 'c:/...')
+		if (/^[A-Z]:\//i.test(norm)) {
+			norm = norm[0].toLowerCase() + norm.slice(1);
+		}
+
+		return norm;
+	}
 }
+
+
 
 suite('Command-Create Test Suite', () => {
 	vscode.window.showInformationMessage('Start all create tests.');
@@ -143,7 +160,7 @@ suite('Command-Create Test Suite', () => {
 		await mockFileWriter.writeFile(testUri, testContent);
 
 		assert.strictEqual(mockFileWriter.writeFileCalled, true);
-		assert.strictEqual(mockFileWriter.writeFileUri, testUri);
+		assert.strictEqual(mockFileWriter.writeFileUri?.fsPath, testUri.fsPath);
 		assert.strictEqual(mockFileWriter.writeFileContent, testContent);
 	});
 
