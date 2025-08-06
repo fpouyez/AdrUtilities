@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/fpouyez/AdrUtilities/compare/v1.4.7...v1.5.0) (2025-08-06)
+
+
+### Bug Fixes
+
+* Correction de la compatibilité Windows pour la création d'ADR ([59a04a8](https://github.com/fpouyez/AdrUtilities/commit/59a04a81d1ca9d573ab160cc4c2debffe1f20e93))
+* Correction de la normaization des chemins (windows) ([f224c19](https://github.com/fpouyez/AdrUtilities/commit/f224c19e9e7a94b592b6b66a9b2bc4b9290d6a2a))
+
+
+### Features
+
+* Add optional ADR directory management ([23f5f58](https://github.com/fpouyez/AdrUtilities/commit/23f5f58dfdccafc88e678f28f3bb40310d7391d9)), closes [#137](https://github.com/fpouyez/AdrUtilities/issues/137)
+
 ## [1.4.7](https://github.com/fpouyez/AdrUtilities/compare/v1.4.6...v1.4.7) (2025-08-04)
 
 
