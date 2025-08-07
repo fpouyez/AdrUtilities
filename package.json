@@ -4,7 +4,7 @@
 	"description": "Some tools for manage ADR in your projects",
 	"icon": "images/vsicon.png",
 	"publisher": "FredericPouyez",
-	"version": "1.5.0",
+	"version": "1.5.1",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.101.0"

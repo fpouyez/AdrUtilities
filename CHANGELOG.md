@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/fpouyez/AdrUtilities/compare/v1.5.0...v1.5.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* autoCreateFolder setting correction. ([d631ea6](https://github.com/fpouyez/AdrUtilities/commit/d631ea6b1f8537a58bbc103dab3532b3d8d2f1d7))
+
 # [1.5.0](https://github.com/fpouyez/AdrUtilities/compare/v1.4.7...v1.5.0) (2025-08-06)
 
 
