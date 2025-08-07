@@ -117,6 +117,11 @@
 						"Standard MADR (Markdown Architecture Decision Records) template with YAML frontmatter, in English.",
 						"Standard MADR (Markdown Architecture Decision Records) template with YAML frontmatter, in French."
 					]
+				},
+				"adrutilities.autoCreateFolder": {
+					"type": "boolean",
+					"default": true,
+					"description": "If true, automatically create ADR subdirectory or use the current ADR directory (defined by adrDirectoryName). Use the current directory otherwise."
 				}
 			}
 		}
