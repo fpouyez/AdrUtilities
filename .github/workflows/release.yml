@@ -26,6 +26,8 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@v6.0.0
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/setup-node-install
         with:
           node-version: 20
