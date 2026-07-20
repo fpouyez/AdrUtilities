@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/fpouyez/AdrUtilities/compare/v1.5.1...v1.5.2) (2026-07-20)
+
+
+### Bug Fixes
+
+* remove the whitespace character in codelens detection ([5096cea](https://github.com/fpouyez/AdrUtilities/commit/5096cead0620d3d0ddb265d7b286f136818827cc))
+
 ## [1.5.1](https://github.com/fpouyez/AdrUtilities/compare/v1.5.0...v1.5.1) (2025-08-07)
 
 
