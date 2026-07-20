@@ -50,7 +50,7 @@ It follows its own naming and content management rules while adapting to your pr
 3. Search for "ADR Utilities"
 4. Click Install
 
-**Requirements:** VS Code 1.101.0 or newer
+**Requirements:** VS Code 1.106.1 or newer
 
 ## 🛠️ Quick Usage
 
