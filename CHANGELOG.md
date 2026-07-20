@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/fpouyez/AdrUtilities/compare/v1.5.2...v1.5.3) (2026-07-20)
+
+
+### Bug Fixes
+
+* **deps:** fix vscode version offset ([b4ae000](https://github.com/fpouyez/AdrUtilities/commit/b4ae0004f47277c076f97a9cc13e20a7865ff93a))
+
 ## [1.5.2](https://github.com/fpouyez/AdrUtilities/compare/v1.5.1...v1.5.2) (2026-07-20)
 
 
