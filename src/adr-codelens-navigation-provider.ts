@@ -11,11 +11,11 @@ function adrRegexBuilder(): RegExp {
 	if (!SecurityValidator.validateAdrPrefix(prefix)) {
 		// Utilise un préfixe par défaut sécurisé si la configuration est invalide
 		const safePrefix = SecurityValidator.escapeRegex("adr_");
-		return new RegExp(".?" + safePrefix + ".+.md", "g");
+		return new RegExp(safePrefix + ".+.md", "g");
 	}
 	
 	const escapedPrefix = SecurityValidator.escapeRegex(prefix);
-	return new RegExp(".?" + escapedPrefix + ".+.md", "g");
+	return new RegExp(escapedPrefix + ".+.md", "g");
 }
 
 export class AdrCodelensNavigationProvider implements CodeLensProvider {
