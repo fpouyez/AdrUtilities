@@ -151,7 +151,7 @@
 		"globals": "^17.7.0",
 		"mocha": "^11.7.4",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.48.0"
+		"typescript-eslint": "^8.65.0"
 	},
 	"private": true
 }
