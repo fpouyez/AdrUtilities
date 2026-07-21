@@ -25,7 +25,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-node-install
@@ -64,7 +64,7 @@ jobs:
     if: ${{ needs.release.outputs.new_tag_version != '' && needs.release.outputs.new_tag_version != 'undefined' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           ref: v${{ needs.release.outputs.new_tag_version }}
